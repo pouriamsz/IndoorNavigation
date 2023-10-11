@@ -34,7 +34,7 @@
             android:exported="false" />
         <activity
             android:name=".Splash"
-            android:exported="true">
+            android:exported="true" >
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +44,7 @@
         </activity>
         <meta-data
             android:name="com.google.ar.core"
-            android:value="optional" />
+            android:value="required" />
     </application>
 
 </manifest>

@@ -20,8 +20,6 @@ public class Splash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
-        this.getSupportActionBar().hide();
-
         boolean checkList = checkLocationPermissions();
         int delay;
         if (checkList){
@@ -35,6 +33,8 @@ public class Splash extends AppCompatActivity {
             public void run() {
                 startActivity(new Intent(Splash.this, ARActivity.class));
                 finish();
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
+
             }
         },delay);
     }

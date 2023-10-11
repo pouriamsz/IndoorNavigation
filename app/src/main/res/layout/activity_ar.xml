@@ -17,4 +17,12 @@
         android:layout_marginBottom="3dp"
         tools:ignore="MissingClass" />
 
+    <TextView
+        android:id="@+id/textTxt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text=""
+        />
+
+
 </RelativeLayout>
