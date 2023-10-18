@@ -46,6 +46,10 @@ public class Splash extends AppCompatActivity {
         int internetPrms = ContextCompat.checkSelfPermission(this, android.Manifest.permission.INTERNET);
         int networkStat = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_NETWORK_STATE);
         int wifiStat = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_WIFI_STATE);
+        int changeWifi = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CHANGE_WIFI_STATE);
+        int externalWrite = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int externalRead = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+
 
         List<String> listPermission = new ArrayList<>();
         if (fineLocPrms != PackageManager.PERMISSION_GRANTED) {
@@ -61,7 +65,16 @@ public class Splash extends AppCompatActivity {
             listPermission.add(android.Manifest.permission.INTERNET);
         }
         if (wifiStat != PackageManager.PERMISSION_GRANTED) {
-            listPermission.add(Manifest.permission.ACCESS_WIFI_STATE);
+            listPermission.add(android.Manifest.permission.ACCESS_WIFI_STATE);
+        }
+        if (changeWifi != PackageManager.PERMISSION_GRANTED) {
+            listPermission.add(android.Manifest.permission.CHANGE_WIFI_STATE);
+        }
+        if (externalWrite != PackageManager.PERMISSION_GRANTED) {
+            listPermission.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (externalRead != PackageManager.PERMISSION_GRANTED) {
+            listPermission.add(android.Manifest.permission.READ_EXTERNAL_STORAGE);
         }
         if (!listPermission.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermission.toArray(new String[listPermission.size()]), 1);
