@@ -31,7 +31,7 @@ public class Splash extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(Splash.this, ARActivity.class));
+                startActivity(new Intent(Splash.this, MainActivity.class));
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
 
