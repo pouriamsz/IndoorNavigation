@@ -4,8 +4,6 @@ public class Point {
     double x;
     double y;
     double z;
-    double lat;
-    double lon;
 
     public Point(double x, double y) {
         this.x = x;
@@ -34,13 +32,6 @@ public class Point {
         return z;
     }
 
-    // this should be current point
-    public Point toCartesianCoordinateNoRotation(Point point) {
-        double x = point.x - this.x;
-        double y = point.y - this.y;
-
-        return new Point(x, y);
-    }
 
     // Distance by x & y
     public double distance(Point p) {

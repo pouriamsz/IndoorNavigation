@@ -64,12 +64,22 @@
                 android:text="Direction"
                 android:textAllCaps="false" />
 
+            <TextView
+                android:id="@+id/testTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Test"
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp"
+
+                />
+
             <Button
                 android:id="@+id/openCamera"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="400dp"
+                android:layout_marginTop="350dp"
                 android:text="Open Camera"
                 android:textAllCaps="false" />
 
