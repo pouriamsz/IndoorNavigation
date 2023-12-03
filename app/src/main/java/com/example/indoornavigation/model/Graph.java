@@ -18,6 +18,10 @@ public class Graph {
         return this.points.get(i);
     }
 
+    public ArrayList<Point> getPoints(){
+        return this.points;
+    }
+
     public void connect(int i, int[] js){
         for (int j: js) {
             this.graph[i-1][j-1] = 1;

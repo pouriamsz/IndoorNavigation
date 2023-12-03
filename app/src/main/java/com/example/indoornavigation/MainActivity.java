@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
     Graph graph = new Graph(28, 28);
     List<Integer> route = new ArrayList<>();
 
+    // Camera
+    Button openCamera;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         testTxt = findViewById(R.id.testTxt);
         directionBtn = findViewById(R.id.directionBtn);
+        openCamera = findViewById(R.id.openCamera);
 
         // Load Finger Prints
         for (int i = 1; i < 3; i++) {
@@ -139,6 +142,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        openCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (route != null && route.size()>0){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ArrayList<Point> points = graph.getPoints();
+                            Intent intent = new Intent(MainActivity.this, ARActivity.class);
+                            intent.putExtra("route", points);
+                            intent.putExtra("destination", selectedDes);
+                            startActivity(intent);
+                            finish();
+                            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
+                        }
+                    },600);
+                }
+            }
+        });
 
     }
 
