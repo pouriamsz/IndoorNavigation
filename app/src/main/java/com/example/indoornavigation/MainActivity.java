@@ -16,6 +16,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     TextView testTxt;
+    private EditText edtHeight;
+    RadioButton rMale, rFemale;
+    boolean male = true;
 
     // destination
     String[] destinationList = {"آز سنجش از دور مایکروویو",
@@ -84,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Camera
     Button openCamera;
+    double stepLength = 0.5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +99,13 @@ public class MainActivity extends AppCompatActivity {
         testTxt = findViewById(R.id.testTxt);
         directionBtn = findViewById(R.id.directionBtn);
         openCamera = findViewById(R.id.openCamera);
+        rMale = findViewById(R.id.radioMale);
+        rFemale = findViewById(R.id.radioFemale);
+        edtHeight = findViewById(R.id.edtHeight);
+
+        rMale.setOnCheckedChangeListener((buttonView, isChecked) -> male = isChecked);
+
+        rFemale.setOnCheckedChangeListener((buttonView, isChecked) -> male = !isChecked);
 
         // Load Finger Prints
         for (int i = 1; i < 3; i++) {
@@ -145,6 +159,14 @@ public class MainActivity extends AppCompatActivity {
         openCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    double height = Double.parseDouble(edtHeight.getText().toString());
+                    stepLength = calculateStrideLength(height);
+
+                } catch (Exception ex) {
+                    Toast.makeText(getApplicationContext(), "Empty inputs, fill and try again", Toast.LENGTH_SHORT).show();
+                }
+
                 if (route != null && route.size()>0){
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -152,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                             ArrayList<Point> points = graph.getPoints();
                             Intent intent = new Intent(MainActivity.this, ARActivity.class);
                             intent.putExtra("route", points);
-                            intent.putExtra("destination", selectedDes);
+                            intent.putExtra("stepLength", stepLength);
                             startActivity(intent);
                             finish();
                             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
@@ -163,6 +185,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
+    public double calculateStrideLength(double heightInMeter) {
+        double heightPercentage = 0.3;
+        if (male){
+            heightPercentage = 0.3;
+        }else{
+            heightPercentage = 0.28;
+        }
+
+        double strideLength = heightInMeter * heightPercentage;
+
+        return strideLength;
+    }
+
 
     private void graphPoints() {
         graph.addPoint(new Point(0.6, 0.6));

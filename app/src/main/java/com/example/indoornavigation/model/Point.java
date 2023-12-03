@@ -1,8 +1,8 @@
 package com.example.indoornavigation.model;
 
 public class Point {
-    double x;
-    double y;
+    public double x;
+    public double y;
     double z;
 
     public Point(double x, double y) {

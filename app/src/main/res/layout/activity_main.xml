@@ -12,12 +12,35 @@
         android:layout_height="match_parent"
         >
 
-        <ImageView
-            android:id="@+id/mapImg"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/planv" />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/edtHeight"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text=""
+        android:hint="Height "/>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RadioButton android:id="@+id/radioMale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male"
+            android:checked="true"/>
+        <RadioButton android:id="@+id/radioFemale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Female"/>
+    </RadioGroup>
+
+</LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,7 +74,7 @@
                     android:inputType="none"
 
                     />
-                
+
             </com.google.android.material.textfield.TextInputLayout>
 
 
