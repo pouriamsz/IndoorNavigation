@@ -27,6 +27,7 @@ import com.example.indoornavigation.model.FingerPrint;
 import com.example.indoornavigation.model.Graph;
 import com.example.indoornavigation.model.NearFP;
 import com.example.indoornavigation.model.Point;
+import com.example.indoornavigation.model.Route;
 import com.example.indoornavigation.model.Router;
 import com.example.indoornavigation.model.SampleFPoint;
 import com.example.indoornavigation.model.SampleRouter;
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        graphPoints();
         graphConnections();
 
         directionBtn.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +140,37 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void graphPoints() {
+        graph.addPoint(new Point(0.6, 0.6));
+        graph.addPoint(new Point(0.6, 2.1));
+        graph.addPoint(new Point(0.6, 3.6));
+        graph.addPoint(new Point(0.6, 5.1));
+        graph.addPoint(new Point(0.6, 6.6));
+        graph.addPoint(new Point(0.6, 8.1));
+        graph.addPoint(new Point(0.6, 11.1));
+        graph.addPoint(new Point(0.6, 14.1));
+        graph.addPoint(new Point(0.6, 17.1));
+        graph.addPoint(new Point(0.6, 20.1));
+        graph.addPoint(new Point(0.0, 27.3));
+        graph.addPoint(new Point(3.0, 27.3));
+        graph.addPoint(new Point(0.6, 27.3));
+        graph.addPoint(new Point(2.1, 0.6));
+        graph.addPoint(new Point(3.6, 0.6));
+        graph.addPoint(new Point(5.1, 0.6));
+        graph.addPoint(new Point(8.1, 0.6));
+        graph.addPoint(new Point(2.1, 2.1));
+        graph.addPoint(new Point(2.1, 3.6));
+        graph.addPoint(new Point(3.6, 3.6));
+        graph.addPoint(new Point(3.6, 2.1));
+        graph.addPoint(new Point(5.1, 2.1));
+        graph.addPoint(new Point(5.1, 3.6));
+        graph.addPoint(new Point(6.6, 3.6));
+        graph.addPoint(new Point(6.6, 2.1));
+        graph.addPoint(new Point(8.1, 2.1));
+        graph.addPoint(new Point(8.1, 3.6));
+        graph.addPoint(new Point(9.6, 2.1));
     }
 
 

@@ -1,10 +1,21 @@
 package com.example.indoornavigation.model;
 
+import java.util.ArrayList;
+
 public class Graph {
     private int[][] graph;
+    private ArrayList<Point> points = new ArrayList<>();
 
     public Graph(int nx, int ny){
         graph = new int[nx][ny];
+    }
+
+    public void addPoint(Point p){
+            this.points.add(p);
+    }
+
+    public Point getPoint(int i){
+        return this.points.get(i);
     }
 
     public void connect(int i, int[] js){
