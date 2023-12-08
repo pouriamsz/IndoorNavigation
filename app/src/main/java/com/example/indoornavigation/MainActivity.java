@@ -1,12 +1,14 @@
 package com.example.indoornavigation;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -29,7 +31,6 @@ import com.example.indoornavigation.model.FingerPrint;
 import com.example.indoornavigation.model.Graph;
 import com.example.indoornavigation.model.NearFP;
 import com.example.indoornavigation.model.Point;
-import com.example.indoornavigation.model.Route;
 import com.example.indoornavigation.model.Router;
 import com.example.indoornavigation.model.SampleFPoint;
 import com.example.indoornavigation.model.SampleRouter;
@@ -46,7 +47,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     TextView testTxt;
     private EditText edtHeight;
@@ -65,14 +66,14 @@ public class MainActivity extends AppCompatActivity {
             "بایگانی",
             "آز خدمات مکان مبنا",
     };
-    int selectedDes = 4;
+    int selectedDes = 0;
     AutoCompleteTextView autoCompleteTextView;
     ArrayAdapter<String> arrayAdapter;
 
     // current position
     Button updateCurrentBtn;
-    Point currentPosition;
-    int currentPoint;
+    Point currentPosition = new Point(0,0);
+    int currentPoint = 0;
     private ArrayList<FingerPrint> fingerPrints = new ArrayList<>();
     private ArrayList<Router> routers = new ArrayList<>();
     private ArrayList<SampleRouter> srs = new ArrayList<>();
@@ -91,6 +92,35 @@ public class MainActivity extends AppCompatActivity {
     Button openCamera;
     double stepLength = 0.5;
 
+    // Sensor
+    float alpha = 0.8f; //TODO
+
+    boolean registered = false;
+    int firstCheck = 0;
+    int ignoreCnt = 0, gyroNotChangingCnt = 0;
+
+    private Sensor accelerometerSensor;
+    private float[] accelerometerData = new float[3];
+    private static final double MIN_STEP_THRESHOLD = 9.6; //TODO: 9.4 // Minimum value for peak detection
+    private static final double STEP_THRESHOLD = 10.7; //TODO: 10.5 // Threshold for peak detection
+    private boolean isPeak = false;
+    int stepCount = 0;
+    boolean getAccels = false, getMags = false;
+
+    private float Rot[] = null; //for gravity rotational data
+    private float I[] = null; //for magnetic rotational data
+    private float accels[] = new float[3];
+    private float mags[] = new float[3];
+    private float[] values = new float[3];
+    private float yaw, originYaw = 345;
+    private ArrayList<Float> yaws = new ArrayList<>();
+
+    private float pitch;
+    private float roll;
+    private SensorManager sensorManager;
+    private Sensor rotationSensor, gyroscopeSensor;
+    float gyroY = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +136,14 @@ public class MainActivity extends AppCompatActivity {
         rMale.setOnCheckedChangeListener((buttonView, isChecked) -> male = isChecked);
 
         rFemale.setOnCheckedChangeListener((buttonView, isChecked) -> male = !isChecked);
+
+        //sensor manager & sensor required to calculate yaw
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR);
+        gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+        registerSensors();
 
         // Load Finger Prints
         for (int i = 1; i < 3; i++) {
@@ -147,12 +185,14 @@ public class MainActivity extends AppCompatActivity {
         directionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                route = dijkstra(graph.getGraph(), currentPoint, selectedDes);
-                String routeString = "";
-                for (Integer i: route) {
-                    routeString += i+"-";
+                if (currentPoint!=0 && selectedDes!=0){
+                    route = dijkstra(graph.getGraph(), currentPoint-1, selectedDes-1);
+                    String routeString = "";
+                    for (Integer i: route) {
+                        routeString += i+"-";
+                    }
+                    testTxt.setText("" + routeString);
                 }
-                testTxt.setText("" + routeString);
             }
         });
 
@@ -162,27 +202,217 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     double height = Double.parseDouble(edtHeight.getText().toString());
                     stepLength = calculateStrideLength(height);
+                    if (route != null && route.size()>0){
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ArrayList<Point> points = new ArrayList<>();
+                                for (int ri: route) {
+                                    points.add(graph.getPoints().get(ri));
+                                }
+                                Intent intent = new Intent(MainActivity.this, ARActivity.class);
+                                 intent.putExtra("route", points);
+                                 intent.putExtra("stepLength", stepLength);
+                                startActivity(intent);
+                                finish();
+                                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
+                            }
+                        },600);
+                    }
 
                 } catch (Exception ex) {
                     Toast.makeText(getApplicationContext(), "Empty inputs, fill and try again", Toast.LENGTH_SHORT).show();
                 }
 
-                if (route != null && route.size()>0){
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ArrayList<Point> points = graph.getPoints();
-                            Intent intent = new Intent(MainActivity.this, ARActivity.class);
-                            intent.putExtra("route", points);
-                            intent.putExtra("stepLength", stepLength);
-                            startActivity(intent);
-                            finish();
-                            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_left);
-                        }
-                    },600);
-                }
+
             }
         });
+
+    }
+
+    private void unregisterSensors() {
+        sensorManager.unregisterListener(this);
+    }
+
+    private void registerSensors() {
+        if (accelerometerSensor!=null){
+            sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        Sensor magneticField = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if (magneticField != null) {
+            sensorManager.registerListener(this, magneticField,
+                    SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+        }
+        if (gyroscopeSensor!=null){
+            sensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        registered = true;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+        if (firstCheck<10){
+            firstCheck++;
+            return;
+        }
+
+        gyroscope(event);
+        getSensorData(event);
+        rotation();
+
+    }
+
+
+    private void rotation() {
+        // Rotation
+        if (getMags && getAccels) {
+
+            Rot = new float[9];
+            I= new float[9];
+            SensorManager.getRotationMatrix(Rot, I, accels, mags);
+            float[] outR = new float[9];
+            SensorManager.remapCoordinateSystem(Rot, SensorManager.AXIS_X,SensorManager.AXIS_Z, outR);
+            SensorManager.getOrientation(outR, values);
+
+            // here we calculated the final yaw(azimuth), roll & pitch of the device.
+            // multiplied by a global standard value to get accurate results
+
+            double mAzimuthAngleNotFlat = Math.toDegrees(Math
+                    .atan2((outR[1] - outR[3]), (outR[0] + outR[4])));
+
+            mAzimuthAngleNotFlat += 180;
+            // this is the yaw or the azimuth we need
+            modifyYaw((float)mAzimuthAngleNotFlat);
+            pitch = (float)Math.toDegrees(values[1]);
+            roll = (float)Math.toDegrees(values[2]);
+
+            getAccels = false;
+            getMags = false;
+        }
+    }
+
+
+    private void getSensorData(SensorEvent event) {
+        switch (event.sensor.getType())
+        {
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                mags[0] = alpha*mags[0] + (1-alpha)*event.values[0];
+                mags[1] = alpha*mags[1] + (1-alpha)*event.values[1];
+                mags[2] = alpha*mags[2] + (1-alpha)*event.values[2];
+                getMags = true;
+                break;
+            case Sensor.TYPE_ACCELEROMETER:
+                accelerometerData[0] = event.values[0];
+                accelerometerData[1] = event.values[1];
+                accelerometerData[2] = event.values[2];
+
+                accels[0] = alpha*accels[0] + (1-alpha)*event.values[0];
+                accels[1] = alpha*accels[1] + (1-alpha)*event.values[1];
+                accels[2] = alpha*accels[2] + (1-alpha)*event.values[2];
+                getAccels = true;
+                break;
+        }
+    }
+
+
+    private void gyroscope(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE){
+            float rotationX = event.values[0];
+            gyroY = event.values[1];
+            float rotationZ = event.values[2];
+//            txtSteps.setText( "Yaw = " + yaw+"\n"+
+//                    "steps = " + stepCount + "\n"+
+//                    "gyro x = " + rotationX + "\n" +
+//                    "gyro y = " + rotationY + "\n" +
+//                    "gyro z = " + rotationZ + "\n"
+//            );
+        }
+
+    }
+
+
+    private void modifyYaw(float value) {
+        if (yaws.size() >= 3 && Math.abs(gyroY) < 0.05){ // TODO
+            if (gyroNotChangingCnt >= 15){
+                return;
+            }
+            yaw = 0;
+            for (int i = 0; i < yaws.size(); i++) {
+                yaw += yaws.get(i);
+            }
+            yaw = yaw/yaws.size();
+            if (ignoreCnt<=5 && Math.abs(yaw - value )>10 && gyroY<0.1) { //TODO
+                ignoreCnt++;
+            }else if (ignoreCnt > 5){ // TODO
+                ignoreCnt--; // TODO
+                yaws.remove(0);
+                yaws.add(value);
+                yaw = 0;
+                for (int i = 0; i < yaws.size(); i++) {
+                    yaw += yaws.get(i);
+                }
+                yaw = yaw/yaws.size();
+            }else{
+                if (yaws.size()>3){ //TODO
+                    yaws.remove(0);
+                }
+                yaws.add(value);
+                yaw = 0;
+                for (int i = 0; i < yaws.size(); i++) {
+                    yaw += yaws.get(i);
+                }
+                yaw /= yaws.size();
+            }
+            gyroNotChangingCnt++;
+            return;
+        }
+        if (Math.abs(gyroY)>0.5){
+            yaws = new ArrayList<>();
+            ignoreCnt = 0;
+            gyroNotChangingCnt=0;
+        }
+        if ((yaw > 340 && value < 20) || (yaw<20 && value>340)){
+            yaws = new ArrayList<>();
+        }
+        if (yaws.size()==0){
+            yaw = value;
+            yaws.add(yaw);
+        }else{
+            yaw = 0;
+            for (int i = 0; i < yaws.size(); i++) {
+                yaw += yaws.get(i);
+            }
+            yaw = yaw/yaws.size();
+            if (ignoreCnt<=5 && Math.abs(yaw - value )>10 && gyroY<0.1) { //TODO
+                ignoreCnt++;
+            }else if (ignoreCnt > 5){ // TODO
+                ignoreCnt--; // TODO
+                yaws.remove(0);
+                yaws.add(value);
+                yaw = 0;
+                for (int i = 0; i < yaws.size(); i++) {
+                    yaw += yaws.get(i);
+                }
+                yaw = yaw/yaws.size();
+            }else{
+                if (yaws.size()>3){ //TODO
+                    yaws.remove(0);
+                }
+                yaws.add(value);
+                yaw = 0;
+                for (int i = 0; i < yaws.size(); i++) {
+                    yaw += yaws.get(i);
+                }
+                yaw /= yaws.size();
+            }
+
+        }
+    }
+
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
 
@@ -190,9 +420,9 @@ public class MainActivity extends AppCompatActivity {
     public double calculateStrideLength(double heightInMeter) {
         double heightPercentage = 0.3;
         if (male){
-            heightPercentage = 0.3;
+            heightPercentage = 0.23;
         }else{
-            heightPercentage = 0.28;
+            heightPercentage = 0.20;
         }
 
         double strideLength = heightInMeter * heightPercentage;
@@ -202,36 +432,35 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void graphPoints() {
-        graph.addPoint(new Point(0.6, 0.6));
-        graph.addPoint(new Point(0.6, 2.1));
-        graph.addPoint(new Point(0.6, 3.6));
-        graph.addPoint(new Point(0.6, 5.1));
-        graph.addPoint(new Point(0.6, 6.6));
-        graph.addPoint(new Point(0.6, 8.1));
-        graph.addPoint(new Point(0.6, 11.1));
-        graph.addPoint(new Point(0.6, 14.1));
-        graph.addPoint(new Point(0.6, 17.1));
-        graph.addPoint(new Point(0.6, 20.1));
-        graph.addPoint(new Point(0.0, 27.3));
-        graph.addPoint(new Point(3.0, 27.3));
-        graph.addPoint(new Point(0.6, 27.3));
-        graph.addPoint(new Point(2.1, 0.6));
-        graph.addPoint(new Point(3.6, 0.6));
-        graph.addPoint(new Point(5.1, 0.6));
-        graph.addPoint(new Point(8.1, 0.6));
-        graph.addPoint(new Point(2.1, 2.1));
-        graph.addPoint(new Point(2.1, 3.6));
-        graph.addPoint(new Point(3.6, 3.6));
-        graph.addPoint(new Point(3.6, 2.1));
-        graph.addPoint(new Point(5.1, 2.1));
-        graph.addPoint(new Point(5.1, 3.6));
-        graph.addPoint(new Point(6.6, 3.6));
-        graph.addPoint(new Point(6.6, 2.1));
-        graph.addPoint(new Point(8.1, 2.1));
-        graph.addPoint(new Point(8.1, 3.6));
-        graph.addPoint(new Point(9.6, 2.1));
+        graph.addPoint(new Point(0.6, 0.6)); // 1
+        graph.addPoint(new Point(0.6, 2.1)); // 2
+        graph.addPoint(new Point(0.6, 3.6)); // 3
+        graph.addPoint(new Point(0.6, 5.1)); // 4
+        graph.addPoint(new Point(0.6, 6.6)); // 5
+        graph.addPoint(new Point(0.6, 8.1)); // 6
+        graph.addPoint(new Point(0.6, 11.1)); // 7
+        graph.addPoint(new Point(0.6, 14.1)); // 8
+        graph.addPoint(new Point(0.6, 17.1)); // 9
+        graph.addPoint(new Point(0.6, 20.1)); // 10
+        graph.addPoint(new Point(0.0, 27.3)); // 11
+        graph.addPoint(new Point(3.0, 27.3)); // 12
+        graph.addPoint(new Point(0.6, 27.3)); // 13
+        graph.addPoint(new Point(2.1, 0.6)); // 14
+        graph.addPoint(new Point(3.6, 0.6)); // 15
+        graph.addPoint(new Point(5.1, 0.6)); // 16
+        graph.addPoint(new Point(8.1, 0.6)); // 17
+        graph.addPoint(new Point(2.1, 2.1)); // 18
+        graph.addPoint(new Point(2.1, 3.6)); // 19
+        graph.addPoint(new Point(3.6, 3.6)); // 20
+        graph.addPoint(new Point(3.6, 2.1)); // 21
+        graph.addPoint(new Point(5.1, 2.1)); // 22
+        graph.addPoint(new Point(5.1, 3.6)); // 23
+        graph.addPoint(new Point(6.6, 3.6)); // 24
+        graph.addPoint(new Point(6.6, 2.1)); // 25
+        graph.addPoint(new Point(8.1, 2.1)); // 26
+        graph.addPoint(new Point(8.1, 3.6)); // 27
+        graph.addPoint(new Point(9.6, 2.1)); // 28
     }
-
 
     public static List<Integer> dijkstra(int[][] graph, int startNode, int endNode) {
         int n = graph.length;
@@ -429,7 +658,9 @@ public class MainActivity extends AppCompatActivity {
         currentPoint = fpMin.getNumber();
         testTxt.setText( "n : " + currentPoint +"\n"+
                 "x : " + currentPosition.getX()+ "\n"+
-                "y : " + currentPosition.getY());
+                "y : " + currentPosition.getY() + "\n" +
+                "xp : " + sp.getX() + "\n" +
+                "yp : " + sp.getY());
     }
 
 
@@ -523,6 +754,9 @@ public class MainActivity extends AppCompatActivity {
         FingerPrint fpMin = new FingerPrint(0, 0.0, 0.0);
         boolean foundRouter = false;
 
+
+
+
 //        ArrayList<NearFP> nfps = new ArrayList<>();
 
         // beine tamame finger print ha loop mizanim
@@ -531,7 +765,31 @@ public class MainActivity extends AppCompatActivity {
         // shamele router haye motafavet hastan
         for (FingerPrint fp : fingerPrints
         ) {
-            for (FPoint p : fp.getPoints()) {
+            ArrayList<FPoint> pointsToSearch = new ArrayList<>();
+
+            // left
+            if (yaw>230 && yaw <300){
+                pointsToSearch.add(fp.getPoints().get(3));
+
+                // down
+            }else if (yaw>130 && yaw< 200){
+                pointsToSearch.add(fp.getPoints().get(2));
+
+                // right
+            }else if (yaw>30 && yaw<100){
+                pointsToSearch.add(fp.getPoints().get(1));
+
+                // up
+            }else if ((yaw>300 && yaw <360) || (yaw>0 && yaw<30)){
+                pointsToSearch.add(fp.getPoints().get(0));
+            }else{
+                pointsToSearch.add(fp.getPoints().get(0));
+                pointsToSearch.add(fp.getPoints().get(1));
+                pointsToSearch.add(fp.getPoints().get(2));
+                pointsToSearch.add(fp.getPoints().get(3));
+
+            }
+            for (FPoint p : pointsToSearch) {
                 // inja router haye noghte morede nazar ra
                 // ba router haye point p barresi mikonim
                 for (SampleRouter sr : sp_.getWifiList()
@@ -700,6 +958,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return min;
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+        registered = false;
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
 

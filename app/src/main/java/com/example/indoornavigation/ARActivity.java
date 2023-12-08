@@ -1,7 +1,6 @@
 package com.example.indoornavigation;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -59,6 +58,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private int count = 0;
     private Scene.OnUpdateListener sceneUpdate;
     private ArrayList<Double> angleBetweenTwoVectorList = new ArrayList<>();
+    int nextPointFrames = 0;
+    boolean isARotationPoint = false;
 
     // Sensor
     double stepLength = 0.5;
@@ -82,7 +83,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private float accels[] = new float[3];
     private float mags[] = new float[3];
     private float[] values = new float[3];
-    private float yaw, originYaw = 143;
+    private float yaw, originYaw = 345;
     private ArrayList<Float> yaws = new ArrayList<>();
 
     private float pitch;
@@ -129,13 +130,13 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         registerSensors();
 
         // Get route
-        ArrayList<Point> points = (ArrayList<Point>)getIntent().getSerializableExtra("route");
-        route.setPoints(points);
+         ArrayList<Point> points = (ArrayList<Point>)getIntent().getSerializableExtra("route");
+         route.setPoints(points);
 
-        stepLength = (double) getIntent().getDoubleExtra("stepLength", 0.5);
+         stepLength = (double) getIntent().getDoubleExtra("stepLength", 0.5);
 
-        current = points.get(0);
-
+         current = points.get(0);
+//        current = new Point(0,0);
 //        // TO debug
 //        route.addPoint(new Point(0,0));
 //        route.addPoint(new Point(0,2));
@@ -208,7 +209,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             return;
         }
 
-
+        nextPointFrames++;
         // Rotate model from view point to current location
         Quaternion q = arCam.getArSceneView().getScene().getCamera().getLocalRotation();
         Quat qc = new Quat(q);
@@ -259,6 +260,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
             // Direction from view to next point on route
             final Vertex diffFromViewToNext = nextPnt.sub(viewPoint);
+            final Vertex diffFromCurrentToNext = nextPnt.sub(vertexCurrent);
             final Vertex diffFromNextToPrev = prevPnt.sub(nextPnt);
 
             // Distance from view to next point
@@ -284,8 +286,15 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             final Quaternion lookFromViewToNext;
             // TODO: 45 and 135?
             if (Math.toDegrees(angleBetweenTwoVector)>45 &&  Math.toDegrees(angleBetweenTwoVector)<125){
+                if (nextPointFrames<5){
+                    isARotationPoint = true;
+                }
                 finalQ = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
             }else{
+                if (isARotationPoint){
+                    modifyCurrent(prevPnt);
+                    isARotationPoint = false;
+                }
                 faceToBed = Quaternion.axisAngle(Vector3.right(), 90f);
                 lookFromViewToNext = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
 
@@ -297,35 +306,58 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
             if (ni!=0){
                 // to debug
-//                test.setText("yaw = "+ yaw +
-//                                "Diff yaw = " + (yaw-originYaw) + "\n"+
-//                                "current = " + current.getX()+", "+ current.getY()+"\n"+
-//                                "view = " +viewPoint.getX()+", "+viewPoint.getY()+"\n"+
-//                                "distance to next point = "+ diffFromViewToNext.length()
-//                );
+                test.setText("yaw = "+ yaw +
+                                "Diff yaw = " + (yaw-originYaw) + "\n"+
+                                "current = " + current.getX()+", "+ current.getY()+"\n"+
+                                "view = " +viewPoint.getX()+", "+viewPoint.getY()+"\n"+
+                          "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ "\n"+
+                                "distance to next point = "+ diffFromViewToNext.length() + "\n" +
+                        "distance from current to next = " + diffFromCurrentToNext.length()
+                );
 
                 if (!route.finish(ni)){
                     // TODO:1.?
-                    if (diffFromViewToNext.length()/10<0.75){
+                    // TODO: current or view
+                    if (diffFromViewToNext.length()<2.5){
 
                         ni = route.next(ni);
                         angleBetweenTwoVectorList = new ArrayList<>();
+                        nextPointFrames = 0;
                     }
                 }else{
                     // View point is on destination, put marker
-                    if (diffFromViewToNext.length()/10<1.0){
+                    if (diffFromCurrentToNext.length()  <0.5){
                          loadDestinationModel();
                     }
                 }
             }else{
                 // Route has just one point so
                 // View point is on destination, put marker
-                if (diffFromViewToNext.length()/10<1.0){
+                if (diffFromCurrentToNext.length()<0.5){
                      loadDestinationModel();
                 }
             }
         }
 
+    }
+
+    private void modifyCurrent(Vertex prevPnt) {
+        // left
+        if (yaw>230 && yaw <300){
+            current.y = prevPnt.getY();
+
+            // down
+        }else if (yaw>130 && yaw< 200){
+            current.x = prevPnt.getX();
+
+            // right
+        }else if (yaw>30 && yaw<100){
+            current.y = prevPnt.getY();
+
+            // up
+        }else if ((yaw>300 && yaw <360) || (yaw>0 && yaw<30)){
+            current.x = prevPnt.getX();
+        }
     }
 
     private double modifyAngle(double angleBetweenTwoVector) {
@@ -428,8 +460,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         // TODO: use pitch to determine scale
         double scale = -(Math.abs(pitch)+90)/180 + (1.5); // max = 0.5, min = 1
         // TODO:
-        model.getScaleController().setMaxScale((float)scale*6/1000); // TODO: 6/1000
-        model.getScaleController().setMinScale((float)scale*4/1000); // TODO: 4/1000
+        model.getScaleController().setMaxScale((float)scale*3/1000); // TODO: 6/1000
+        model.getScaleController().setMinScale((float)scale*2/1000); // TODO: 4/1000
         // TODO: use pitch to determine distance
         double rayDis = 1.5 * 1/Math.cos(Math.toRadians(Math.abs(pitch)));
         model.setLocalPosition(ray.getPoint((float)rayDis));
@@ -454,6 +486,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         getSensorData(event);
         rotation();
         stepDetector(event);
+
     }
 
 
@@ -522,8 +555,27 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
 
     private void updateCurrent() {
-        current.x += stepLength * Math.sin(Math.toRadians(yaw-originYaw));
-        current.y += stepLength * Math.cos(Math.toRadians(yaw-originYaw));
+        // left
+        if (yaw>250 && yaw <280){
+            current.x -= stepLength;
+
+            // down
+        }else if (yaw>150 && yaw< 180){
+            current.y -= stepLength;
+
+            // right
+        }else if (yaw>50 && yaw<80){
+            current.x += stepLength;
+
+            // up
+        }else if (yaw>330 && yaw <360){
+            current.y += stepLength;
+
+        }else{
+            current.x += stepLength * Math.sin(Math.toRadians(yaw-originYaw));
+            current.y += stepLength * Math.cos(Math.toRadians(yaw-originYaw));
+        }
+
     }
 
     private void getSensorData(SensorEvent event) {
