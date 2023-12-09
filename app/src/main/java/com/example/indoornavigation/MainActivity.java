@@ -49,6 +49,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
+    TextView stepN, mosaicN;
+    Button calibration;
+
     TextView testTxt;
     private EditText edtHeight;
     RadioButton rMale, rFemale;
@@ -132,6 +135,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         rMale = findViewById(R.id.radioMale);
         rFemale = findViewById(R.id.radioFemale);
         edtHeight = findViewById(R.id.edtHeight);
+        mosaicN = findViewById(R.id.edtNumberMosaic);
+        stepN = findViewById(R.id.edtNumberStep);
+        calibration = findViewById(R.id.calibrateBtn);
 
         rMale.setOnCheckedChangeListener((buttonView, isChecked) -> male = isChecked);
 
@@ -196,12 +202,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
+        calibration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    double mosaicNumber = Double.parseDouble(mosaicN.getText().toString());
+                    double stepNumber =  Double.parseDouble(stepN.getText().toString());
+                    stepLength = mosaicNumber*0.3/stepNumber;
+                }catch (Exception ex){
+                    Toast.makeText(getApplicationContext(), "Empty inputs, fill and try again", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         openCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     double height = Double.parseDouble(edtHeight.getText().toString());
-                    stepLength = calculateStrideLength(height);
+                    // stepLength = calculateStrideLength(height);
                     if (route != null && route.size()>0){
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -420,9 +439,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public double calculateStrideLength(double heightInMeter) {
         double heightPercentage = 0.3;
         if (male){
-            heightPercentage = 0.23;
-        }else{
             heightPercentage = 0.20;
+        }else{
+            heightPercentage = 0.18;
         }
 
         double strideLength = heightInMeter * heightPercentage;
@@ -856,6 +875,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // in shart check mishavad
         // ta az crash kardan app jelogiri shavad
         int kInKNN = 3;
+
+        if (fpMin.getNumber()>=4 && fpMin.getNumber()<=13){
+            kInKNN = 1;
+        }
         if (rmseValsForSort.size() > kInKNN) {
             for (int i = 0; i < kInKNN; i++) {
                 knnFPs.put(rmseValsForSort.get(i), fpRMSE.get(rmseValsForSort.get(i)));

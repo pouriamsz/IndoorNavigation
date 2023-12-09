@@ -40,6 +40,32 @@
             android:text="Female"/>
     </RadioGroup>
 
+
+    <EditText
+        android:id="@+id/edtNumberMosaic"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text=""
+        android:hint="Mosaic number "/>
+
+    <EditText
+        android:id="@+id/edtNumberStep"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text=""
+        android:hint="Step number "/>
+
+    <Button
+        android:id="@+id/calibrateBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="Calibration"
+        android:textAllCaps="false" />
+
 </LinearLayout>
 
         <LinearLayout

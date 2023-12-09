@@ -288,12 +288,16 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             if (Math.toDegrees(angleBetweenTwoVector)>45 &&  Math.toDegrees(angleBetweenTwoVector)<125){
                 if (nextPointFrames<5){
                     isARotationPoint = true;
+//                    test.setText("is rotation = " + isARotationPoint + "\n" +
+//                            "current : " + current.getX() + ", "+ current.getY());
                 }
                 finalQ = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
             }else{
                 if (isARotationPoint){
                     modifyCurrent(prevPnt);
                     isARotationPoint = false;
+//                    test.setText("is rotation = " + isARotationPoint + "\n" +
+//                            "current : " + current.getX() + ", "+ current.getY());
                 }
                 faceToBed = Quaternion.axisAngle(Vector3.right(), 90f);
                 lookFromViewToNext = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
@@ -312,13 +316,14 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                                 "view = " +viewPoint.getX()+", "+viewPoint.getY()+"\n"+
                           "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ "\n"+
                                 "distance to next point = "+ diffFromViewToNext.length() + "\n" +
-                        "distance from current to next = " + diffFromCurrentToNext.length()
+                        "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
+                        "is rotation :" + isARotationPoint
                 );
 
                 if (!route.finish(ni)){
                     // TODO:1.?
                     // TODO: current or view
-                    if (diffFromViewToNext.length()<2.5){
+                    if (diffFromCurrentToNext.length()<1.5){
 
                         ni = route.next(ni);
                         angleBetweenTwoVectorList = new ArrayList<>();
@@ -344,19 +349,19 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private void modifyCurrent(Vertex prevPnt) {
         // left
         if (yaw>230 && yaw <300){
-            current.y = prevPnt.getY();
+            current.setY(prevPnt.getY());
 
             // down
         }else if (yaw>130 && yaw< 200){
-            current.x = prevPnt.getX();
+            current.setX(prevPnt.getX());
 
             // right
         }else if (yaw>30 && yaw<100){
-            current.y = prevPnt.getY();
+            current.setY(prevPnt.getY());
 
             // up
         }else if ((yaw>300 && yaw <360) || (yaw>0 && yaw<30)){
-            current.x = prevPnt.getX();
+            current.setX(prevPnt.getX());
         }
     }
 
@@ -556,19 +561,19 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
     private void updateCurrent() {
         // left
-        if (yaw>250 && yaw <280){
+        if (yaw>240 && yaw <290){
             current.x -= stepLength;
 
             // down
-        }else if (yaw>150 && yaw< 180){
+        }else if (yaw>140 && yaw< 190){
             current.y -= stepLength;
 
             // right
-        }else if (yaw>50 && yaw<80){
+        }else if (yaw>40 && yaw<90){
             current.x += stepLength;
 
             // up
-        }else if (yaw>330 && yaw <360){
+        }else if ((yaw>320 && yaw <360) || (yaw > 0 && yaw <30 ) ){
             current.y += stepLength;
 
         }else{
