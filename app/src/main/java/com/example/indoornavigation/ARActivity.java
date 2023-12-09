@@ -60,7 +60,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private ArrayList<Double> angleBetweenTwoVectorList = new ArrayList<>();
     int nextPointFrames = 0;
     boolean isARotationPoint = false;
-
+    boolean stopUpdateCurrent = false;
     // Sensor
     double stepLength = 0.5;
 
@@ -277,6 +277,13 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             angleBetweenTwoVector = modifyAngle(angleBetweenTwoVector);
             // TODO: 140?
             if (Math.toDegrees(angleBetweenTwoVector)>130){
+                if (isARotationPoint){
+                    modifyCurrent(prevPnt);
+                    stopUpdateCurrent = false;
+                    isARotationPoint = false;
+//                    test.setText("is rotation = " + isARotationPoint + "\n" +
+//                            "current : " + current.getX() + ", "+ current.getY());
+                }
                 rotationDegree = Math.PI;
             }else{
                 rotationDegree = beta - alpha;
@@ -288,17 +295,13 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             if (Math.toDegrees(angleBetweenTwoVector)>45 &&  Math.toDegrees(angleBetweenTwoVector)<125){
                 if (nextPointFrames<5){
                     isARotationPoint = true;
+                    stopUpdateCurrent = true;
 //                    test.setText("is rotation = " + isARotationPoint + "\n" +
 //                            "current : " + current.getX() + ", "+ current.getY());
                 }
                 finalQ = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
             }else{
-                if (isARotationPoint){
-                    modifyCurrent(prevPnt);
-                    isARotationPoint = false;
-//                    test.setText("is rotation = " + isARotationPoint + "\n" +
-//                            "current : " + current.getX() + ", "+ current.getY());
-                }
+
                 faceToBed = Quaternion.axisAngle(Vector3.right(), 90f);
                 lookFromViewToNext = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
 
@@ -560,6 +563,9 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
 
     private void updateCurrent() {
+        if (stopUpdateCurrent){
+            return;
+        }
         // left
         if (yaw>240 && yaw <290){
             current.x -= stepLength;
