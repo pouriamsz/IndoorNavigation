@@ -59,6 +59,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private Scene.OnUpdateListener sceneUpdate;
     private ArrayList<Double> angleBetweenTwoVectorList = new ArrayList<>();
     int nextPointFrames = 0;
+    int afterTrueFrames = 0;
     boolean isARotationPoint = false;
     boolean stopUpdateCurrent = false;
     // Sensor
@@ -210,6 +211,9 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         }
 
         nextPointFrames++;
+        if (isARotationPoint){
+            afterTrueFrames++;
+        }
         // Rotate model from view point to current location
         Quaternion q = arCam.getArSceneView().getScene().getCamera().getLocalRotation();
         Quat qc = new Quat(q);
@@ -276,14 +280,19 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             );
             angleBetweenTwoVector = modifyAngle(angleBetweenTwoVector);
             // TODO: 140?
-            if (Math.toDegrees(angleBetweenTwoVector)>130){
-                if (isARotationPoint){
+            if (Math.toDegrees(angleBetweenTwoVector)>150){
+                if (isARotationPoint  && afterTrueFrames>3){
                     modifyCurrent(prevPnt);
                     stopUpdateCurrent = false;
                     isARotationPoint = false;
+//                    nextPointFrames = 0; //?
+                    afterTrueFrames = 0;
 //                    test.setText("is rotation = " + isARotationPoint + "\n" +
 //                            "current : " + current.getX() + ", "+ current.getY());
                 }
+            }
+            if (Math.toDegrees(angleBetweenTwoVector)>150){
+
                 rotationDegree = Math.PI;
             }else{
                 rotationDegree = beta - alpha;
@@ -291,14 +300,17 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             final Quaternion finalQ;
             final Quaternion faceToBed;
             final Quaternion lookFromViewToNext;
-            // TODO: 45 and 135?
-            if (Math.toDegrees(angleBetweenTwoVector)>45 &&  Math.toDegrees(angleBetweenTwoVector)<125){
-                if (nextPointFrames<5){
+            if (Math.toDegrees(angleBetweenTwoVector)>25 &&  Math.toDegrees(angleBetweenTwoVector)<145){
+                if (nextPointFrames<20){
                     isARotationPoint = true;
                     stopUpdateCurrent = true;
 //                    test.setText("is rotation = " + isARotationPoint + "\n" +
 //                            "current : " + current.getX() + ", "+ current.getY());
                 }
+            }
+            // TODO: 45 and 135?
+            if (Math.toDegrees(angleBetweenTwoVector)>35 &&  Math.toDegrees(angleBetweenTwoVector)<125){
+
                 finalQ = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
             }else{
 
@@ -350,22 +362,29 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     }
 
     private void modifyCurrent(Vertex prevPnt) {
-        // left
-        if (yaw>230 && yaw <300){
-            current.setY(prevPnt.getY());
-
-            // down
-        }else if (yaw>130 && yaw< 200){
-            current.setX(prevPnt.getX());
-
-            // right
-        }else if (yaw>30 && yaw<100){
-            current.setY(prevPnt.getY());
-
-            // up
-        }else if ((yaw>300 && yaw <360) || (yaw>0 && yaw<30)){
-            current.setX(prevPnt.getX());
-        }
+        current.setY(prevPnt.getY());
+        current.setX(prevPnt.getX());
+//        // left
+//        if (yaw>230 && yaw <300){
+//            current.setY(prevPnt.getY());
+//            current.setX(prevPnt.getX());
+//
+//            // down
+//        }else if (yaw>130 && yaw< 200){
+//            current.setX(prevPnt.getX());
+//            current.setY(prevPnt.getY());
+//
+//            // right
+//        }else if (yaw>30 && yaw<100){
+//            current.setY(prevPnt.getY());
+//            current.setX(prevPnt.getX());
+//
+//            // up
+//        }else if ((yaw>300 && yaw <360) || (yaw>0 && yaw<30)){
+//            current.setX(prevPnt.getX());
+//            current.setY(prevPnt.getY());
+//
+//        }
     }
 
     private double modifyAngle(double angleBetweenTwoVector) {
@@ -493,7 +512,9 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         gyroscope(event);
         getSensorData(event);
         rotation();
-        stepDetector(event);
+        if (Math.abs(gyroY)<0.3){
+            stepDetector(event);
+        }
 
     }
 
@@ -638,7 +659,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 yaw += yaws.get(i);
             }
             yaw = yaw/yaws.size();
-            if (ignoreCnt<=5 && Math.abs(yaw - value )>10 && gyroY<0.1) { //TODO
+            if (ignoreCnt<=5 && Math.abs(yaw - value )>10 && Math.abs(gyroY)<0.1) { //TODO
                 ignoreCnt++;
             }else if (ignoreCnt > 5){ // TODO
                 ignoreCnt--; // TODO
@@ -680,7 +701,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 yaw += yaws.get(i);
             }
             yaw = yaw/yaws.size();
-            if (ignoreCnt<=5 && Math.abs(yaw - value )>10 && gyroY<0.1) { //TODO
+            if (ignoreCnt<=5 && Math.abs(yaw - value )>10 && Math.abs(gyroY)<0.1) { //TODO
                 ignoreCnt++;
             }else if (ignoreCnt > 5){ // TODO
                 ignoreCnt--; // TODO
