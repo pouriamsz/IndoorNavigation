@@ -42,4 +42,7 @@ dependencies {
 
     implementation("androidx.fragment:fragment:1.5.5")
     implementation("com.gorisse.thomas.sceneform:sceneform:1.21.0")
+
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
 }

@@ -749,6 +749,9 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     @Override
     public void onResume() {
         super.onResume();
+        if (!registered){
+            registerSensors();
+        }
     }
 
     @Override

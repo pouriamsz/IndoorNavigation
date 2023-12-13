@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".InitPosition">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+
+        <Button
+            android:id="@+id/scanQRBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan QR code" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="\n\n"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Can't find any QR code?\nUse the following button." />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""/>
+
+        <Button
+            android:id="@+id/updateCurrent"
+            android:layout_width="166dp"
+            android:layout_height="wrap_content"
+            android:text="Where am I?" />
+
+        <EditText
+            android:id="@+id/edtInitPosition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""/>
+
+        <Button
+            android:id="@+id/nextStepBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Next Step" />
+
+
+    </LinearLayout>
+</RelativeLayout>
