@@ -395,16 +395,16 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
             if (ni!=0){
                 // to debug
-                test.setText("yaw = "+ yaw +
-                                "Diff yaw = " + (yaw-originYaw) + "\n"+
-                                "current = " + current.getX()+", "+ current.getY()+"\n"+
-                                "view = " +viewPoint.getX()+", "+viewPoint.getY()+"\n"+
-                          "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ "\n"+
-                                "distance to next point = "+ diffFromViewToNext.length() + "\n" +
-                        "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
-                        "is rotation :" + isARotationPoint + "\n" +
-                        "pitch: " + pitch
-                );
+//                test.setText("yaw = "+ yaw +
+//                                "Diff yaw = " + (yaw-originYaw) + "\n"+
+//                                "current = " + current.getX()+", "+ current.getY()+"\n"+
+//                                "view = " +viewPoint.getX()+", "+viewPoint.getY()+"\n"+
+//                          "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ "\n"+
+//                                "distance to next point = "+ diffFromViewToNext.length() + "\n" +
+//                        "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
+//                        "is rotation :" + isARotationPoint + "\n" +
+//                        "pitch: " + pitch
+//                );
 
                 if (!route.finish(ni)){
                     // TODO:1.?
