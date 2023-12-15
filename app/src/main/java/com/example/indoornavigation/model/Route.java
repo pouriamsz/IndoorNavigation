@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Route {
     ArrayList<Point> vertices;
+    int routeSize = 0;
 
     public Route(ArrayList<Point> vertices){
         this.vertices = vertices;
@@ -11,10 +12,12 @@ public class Route {
 
     public void setPoints(ArrayList<Point> vertices) {
         this.vertices = vertices;
+        this.routeSize = vertices.size();
     }
 
     public void addPoint(Point p){
         this.vertices.add(p);
+        this.routeSize+=1;
     }
 
     public ArrayList<Point> getPoints() {
@@ -40,6 +43,7 @@ public class Route {
     }
 
     public int next(int i){
+        this.routeSize-=1;
         return i+1;
     }
 
@@ -49,5 +53,9 @@ public class Route {
         }
 
         return false;
+    }
+
+    public int getSize(){
+        return this.routeSize;
     }
 }

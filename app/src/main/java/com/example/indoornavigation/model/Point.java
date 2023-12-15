@@ -43,5 +43,33 @@ public class Point implements Serializable {
         );
     }
 
+    public Point sub(Point p){
+        return new Point(this.x - p.getX(), this.y-p.getY());
+    }
+
+    public double norm() {
+        return Math.sqrt(this.norm2());
+    }
+
+    public double norm2() {
+        return this.x * this.x +
+                this.y * this.y +
+                this.z * this.z;
+
+    }
+
+    public double length(){
+        return this.norm();
+    }
+
+    public double dot(Point p1) {
+        return (this.x * p1.x) +
+                (this.y * p1.y) +
+                (this.z * p1.z);
+    }
+
+    public double cross(Point p){
+        return (this.x*p.getY())-(this.y*p.getX());
+    }
 
 }

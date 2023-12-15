@@ -149,6 +149,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             ni = 0;
         }
 
+        updateRouteGuide();
+
         // Device size
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -182,6 +184,63 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         } else {
             return;
         }
+    }
+
+    private void updateRouteGuide() {
+        if (ni==0){
+            // we are at destination already
+            return;
+        }
+        int np = ni;
+        // current point id
+        int cp = ni-1;
+        while (true){
+            if (np+1 >= route.getPoints().size()){
+                // update ui
+                double dis = route.getPoints().get(cp)
+                        .distance(route.getPoints().get(route.getPoints().size()-1));
+                test.setText(dis + " meters to destination.");
+            }
+            Point prevPnt = route.getPoints().get(np-1);
+            Point currentPnt = route.getPoints().get(np);
+            Point nextPnt = route.getPoints().get(np+1);
+
+            Point diff0 = currentPnt.sub(prevPnt);
+            Point diff1 = nextPnt.sub(currentPnt);
+            double cross = diff0.cross(diff1);
+            if (cross>0) {
+                // left side
+                // update ui
+                // from cp to np meter
+                // if cp-np == 1 then turn to left
+                if ((cp-np) == 1){
+                    test.setText("Turn to left");
+                }else{
+                    double dis = route.getPoints().get(cp)
+                            .distance(route.getPoints().get(np));
+                    test.setText(dis + " meters to left.");
+                }
+
+                break;
+            }else if (cross<0){
+                // right side
+                // update ui
+                // from cp to np meter
+                // if cp-np == 1 then turn to right
+                if ((cp-np) == 1){
+                    test.setText("Turn to right");
+                }else{
+                    double dis = route.getPoints().get(cp)
+                            .distance(route.getPoints().get(np));
+                    test.setText(dis + " meters to right.");
+                }
+
+                break;
+            }
+
+            np++;
+        }
+
     }
 
 
@@ -288,6 +347,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                     directionFromViewToNext.dot(directionFromViewToCurrent)/
                             (directionFromViewToNext.length()*directionFromViewToCurrent.length())
             );
+            // TODO: comment this
             angleBetweenTwoVector = modifyAngle(angleBetweenTwoVector);
             // TODO: 140?
             if (Math.toDegrees(angleBetweenTwoVector)>150){
@@ -352,6 +412,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                     if (diffFromCurrentToNext.length()<1.5){
 
                         ni = route.next(ni);
+                        updateRouteGuide();
                         angleBetweenTwoVectorList = new ArrayList<>();
                         nextPointFrames = 0;
                     }
