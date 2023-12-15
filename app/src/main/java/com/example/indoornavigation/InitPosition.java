@@ -71,6 +71,12 @@ public class InitPosition extends AppCompatActivity {
 
         double stepLength = (double) getIntent().getDoubleExtra("stepLength", 0.5);
 
+        // WIFI
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (!wifiManager.isWifiEnabled()){
+            Toast.makeText(this, "Wifi is disabled. please enable it.", Toast.LENGTH_SHORT).show();
+            wifiManager.setWifiEnabled(true);
+        }
 
         // Load Finger Prints
         for (int i = 1; i < 3; i++) {
