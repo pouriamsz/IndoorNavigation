@@ -235,7 +235,17 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             // TODO: use pitch
             double d = 2;
             if (pitch != 90) {
-                d = 1.65 * Math.tan(Math.toRadians(Math.abs(pitch)));
+                // height assumed to 1.65
+                double tanPitch = 0.0;
+                if (Math.tan(Math.toRadians(Math.abs(pitch)))==0){
+                    tanPitch = 0.1;
+                }else{
+                    tanPitch = (1/Math.tan(Math.toRadians(Math.abs(pitch))));
+                }
+                if (tanPitch>1.5){
+                    tanPitch = 1.5;
+                }
+                d = 1.65 * tanPitch;
             }
             viewPoint = vertexCurrent.add(new Vertex(d*Math.sin(Math.toRadians(yaw-originYaw)),
                     d*Math.cos(Math.toRadians(yaw-originYaw)),
@@ -332,7 +342,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                           "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ "\n"+
                                 "distance to next point = "+ diffFromViewToNext.length() + "\n" +
                         "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
-                        "is rotation :" + isARotationPoint
+                        "is rotation :" + isARotationPoint + "\n" +
+                        "pitch: " + pitch
                 );
 
                 if (!route.finish(ni)){
@@ -485,12 +496,12 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         model = new TransformableNode(arCam.getTransformationSystem());
         //TODO: scale?
         // TODO: use pitch to determine scale
-        double scale = -(Math.abs(pitch)+90)/180 + (1.5); // max = 0.5, min = 1
+        double scale = (Math.abs(pitch)+90)/180 + (1.); // max = 0.5, min = 1
         // TODO:
         model.getScaleController().setMaxScale((float)scale*3/1000); // TODO: 6/1000
         model.getScaleController().setMinScale((float)scale*2/1000); // TODO: 4/1000
         // TODO: use pitch to determine distance
-        double rayDis = 1.5 * 1/Math.cos(Math.toRadians(Math.abs(pitch)));
+        double rayDis = Math.cos(Math.toRadians(Math.abs(pitch)))*10;
         model.setLocalPosition(ray.getPoint((float)rayDis));
         model.setParent(node);
         model.setRenderable(modelRenderable);
