@@ -91,7 +91,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private float roll;
     private SensorManager sensorManager;
     private Sensor rotationSensor, gyroscopeSensor;
-    float gyroY = 0;
+    float gyroY = 0, gyroX = 0, gyroZ = 0;
 
     public static boolean checkSystemSupport(Activity activity) {
 
@@ -523,7 +523,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         gyroscope(event);
         getSensorData(event);
         rotation();
-        if (Math.abs(gyroY)<0.3){
+        // TODO: check gyroX and gyroZ and check threshold also see the changes in stairs
+        if (Math.abs(gyroY)<0.3 && Math.abs(gyroZ)<0.3 && Math.abs(gyroX)<0.3 ){
             stepDetector(event);
         }
 
@@ -646,9 +647,9 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
     private void gyroscope(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE){
-            float rotationX = event.values[0];
+            gyroX = Math.abs(event.values[0]);
             gyroY = event.values[1];
-            float rotationZ = event.values[2];
+            gyroZ = Math.abs(event.values[2]);
 //            txtSteps.setText( "Yaw = " + yaw+"\n"+
 //                    "steps = " + stepCount + "\n"+
 //                    "gyro x = " + rotationX + "\n" +
