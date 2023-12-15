@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -50,6 +51,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     TextView testTxt;
+    CheckBox blindCheck;
+    boolean blindMode = false;
 
     // destination
     String[] destinationList = {"آز سنجش از دور مایکروویو",
@@ -74,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
     Button directionBtn;
     private static final int INF = Integer.MAX_VALUE;
     Graph graph = new Graph(28, 28);
+    Graph graphBlind = new Graph(28, 28);
+
     List<Integer> route = new ArrayList<>();
 
     // Camera
@@ -90,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         stepLength = (double) getIntent().getDoubleExtra("stepLength", 0.5);
 
-
+        blindCheck = findViewById(R.id.checkBox);
         testTxt = findViewById(R.id.testTxt);
         directionBtn = findViewById(R.id.directionBtn);
         openCamera = findViewById(R.id.openCamera);
@@ -109,14 +114,24 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        graphPoints();
+        addGraphPoints(graph);
+        addGraphPoints(graphBlind);
         graphConnections();
+        graphBlindConnections();
 
         directionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Graph usedGraph;
+                if (blindCheck.isChecked()){
+                    blindMode = true;
+                    usedGraph = graphBlind;
+                }else{
+                    blindMode = false;
+                    usedGraph = graph;
+                }
                 if (currentPoint!=0 && selectedDes!=0){
-                    route = dijkstra(graph.getGraph(), currentPoint-1, selectedDes-1);
+                    route = dijkstra(usedGraph.getGraph(), currentPoint-1, selectedDes-1);
                     String routeString = "";
                     for (Integer i: route) {
                         routeString += i+"-";
@@ -160,35 +175,66 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void graphPoints() {
-        graph.addPoint(new Point(0.6, 0.6)); // 1
-        graph.addPoint(new Point(0.6, 2.1)); // 2
-        graph.addPoint(new Point(0.6, 3.6)); // 3
-        graph.addPoint(new Point(0.6, 5.1)); // 4
-        graph.addPoint(new Point(0.6, 6.6)); // 5
-        graph.addPoint(new Point(0.6, 8.1)); // 6
-        graph.addPoint(new Point(0.6, 11.1)); // 7
-        graph.addPoint(new Point(0.6, 14.1)); // 8
-        graph.addPoint(new Point(0.6, 17.1)); // 9
-        graph.addPoint(new Point(0.6, 20.1)); // 10
-        graph.addPoint(new Point(0.0, 27.3)); // 11
-        graph.addPoint(new Point(3.0, 27.3)); // 12
-        graph.addPoint(new Point(0.6, 27.3)); // 13
-        graph.addPoint(new Point(2.1, 0.6)); // 14
-        graph.addPoint(new Point(3.6, 0.6)); // 15
-        graph.addPoint(new Point(5.1, 0.6)); // 16
-        graph.addPoint(new Point(8.1, 0.6)); // 17
-        graph.addPoint(new Point(2.1, 2.1)); // 18
-        graph.addPoint(new Point(2.1, 3.6)); // 19
-        graph.addPoint(new Point(3.6, 3.6)); // 20
-        graph.addPoint(new Point(3.6, 2.1)); // 21
-        graph.addPoint(new Point(5.1, 2.1)); // 22
-        graph.addPoint(new Point(5.1, 3.6)); // 23
-        graph.addPoint(new Point(6.6, 3.6)); // 24
-        graph.addPoint(new Point(6.6, 2.1)); // 25
-        graph.addPoint(new Point(8.1, 2.1)); // 26
-        graph.addPoint(new Point(8.1, 3.6)); // 27
-        graph.addPoint(new Point(9.6, 2.1)); // 28
+    private void graphBlindConnections() {
+        graphBlind.connect(1,new int[]{2, 14});
+        graphBlind.connect(2,new int[]{1,3, 18});
+        graphBlind.connect(3,new int[]{2,4, 19});
+        graphBlind.connect(4,new int[]{3,5});
+        graphBlind.connect(5,new int[]{4,6});
+        graphBlind.connect(6,new int[]{5,7});
+        graphBlind.connect(7,new int[]{6,8});
+        graphBlind.connect(8,new int[]{7,9});
+        graphBlind.connect(9,new int[]{8,10});
+        graphBlind.connect(10,new int[]{9, 13});
+        graphBlind.connect(11,new int[]{13});
+        graphBlind.connect(12,new int[]{13});
+        graphBlind.connect(13,new int[]{11, 12, 10});
+        graphBlind.connect(14,new int[]{1, 15});
+        graphBlind.connect(15,new int[]{14, 16});
+        graphBlind.connect(16,new int[]{15});
+        graphBlind.connect(17,new int[]{26});
+        graphBlind.connect(18,new int[]{2, 19});
+        graphBlind.connect(19,new int[]{3, 18, 20});
+        graphBlind.connect(20,new int[]{19, 21, 23});
+        graphBlind.connect(21,new int[]{20});
+        graphBlind.connect(22,new int[]{23});
+        graphBlind.connect(23,new int[]{20, 22, 24});
+        graphBlind.connect(24,new int[]{23, 25, 27});
+        graphBlind.connect(25,new int[]{24});
+        graphBlind.connect(26,new int[]{17, 27, 28});
+        graphBlind.connect(27,new int[]{24, 26});
+        graphBlind.connect(28,new int[]{26});
+    }
+
+    private void addGraphPoints(Graph _graph) {
+        _graph.addPoint(new Point(0.6, 0.6)); // 1
+        _graph.addPoint(new Point(0.6, 2.1)); // 2
+        _graph.addPoint(new Point(0.6, 3.6)); // 3
+        _graph.addPoint(new Point(0.6, 5.1)); // 4
+        _graph.addPoint(new Point(0.6, 6.6)); // 5
+        _graph.addPoint(new Point(0.6, 8.1)); // 6
+        _graph.addPoint(new Point(0.6, 11.1)); // 7
+        _graph.addPoint(new Point(0.6, 14.1)); // 8
+        _graph.addPoint(new Point(0.6, 17.1)); // 9
+        _graph.addPoint(new Point(0.6, 20.1)); // 10
+        _graph.addPoint(new Point(0.0, 27.3)); // 11
+        _graph.addPoint(new Point(3.0, 27.3)); // 12
+        _graph.addPoint(new Point(0.6, 27.3)); // 13
+        _graph.addPoint(new Point(2.1, 0.6)); // 14
+        _graph.addPoint(new Point(3.6, 0.6)); // 15
+        _graph.addPoint(new Point(5.1, 0.6)); // 16
+        _graph.addPoint(new Point(8.1, 0.6)); // 17
+        _graph.addPoint(new Point(2.1, 2.1)); // 18
+        _graph.addPoint(new Point(2.1, 3.6)); // 19
+        _graph.addPoint(new Point(3.6, 3.6)); // 20
+        _graph.addPoint(new Point(3.6, 2.1)); // 21
+        _graph.addPoint(new Point(5.1, 2.1)); // 22
+        _graph.addPoint(new Point(5.1, 3.6)); // 23
+        _graph.addPoint(new Point(6.6, 3.6)); // 24
+        _graph.addPoint(new Point(6.6, 2.1)); // 25
+        _graph.addPoint(new Point(8.1, 2.1)); // 26
+        _graph.addPoint(new Point(8.1, 3.6)); // 27
+        _graph.addPoint(new Point(9.6, 2.1)); // 28
     }
 
     public static List<Integer> dijkstra(int[][] graph, int startNode, int endNode) {
