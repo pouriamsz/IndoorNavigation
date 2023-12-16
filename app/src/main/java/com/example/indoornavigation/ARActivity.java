@@ -152,7 +152,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             ni = 0;
         }
 
-//        updateRouteGuide();
+        updateRouteGuide();
 
         // Device size
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -203,6 +203,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 double dis = route.getPoints().get(cp)
                         .distance(route.getPoints().get(route.getPoints().size()-1));
                 test.setText(dis + " meters to destination.");
+                break;
             }
             Point prevPnt = route.getPoints().get(np-1);
             Point currentPnt = route.getPoints().get(np);
@@ -426,7 +427,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                         if (diffFromCurrentToNext.length()<1.5){
 
                             ni = route.next(ni);
-//                        updateRouteGuide();
+                        updateRouteGuide();
                             angleBetweenTwoVectorList = new ArrayList<>();
                             nextPointFrames = 0;
                         }
@@ -445,7 +446,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                     if (diffFromCurrentToNext.length()<1.5){
 
                         ni = route.next(ni);
-//                        updateRouteGuide();
+                        updateRouteGuide();
                         angleBetweenTwoVectorList = new ArrayList<>();
                         nextPointFrames = 0;
                     }
