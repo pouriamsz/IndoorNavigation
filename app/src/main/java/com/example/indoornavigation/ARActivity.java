@@ -33,6 +33,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -92,6 +93,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private SensorManager sensorManager;
     private Sensor rotationSensor, gyroscopeSensor;
     float gyroY = 0, gyroX = 0, gyroZ = 0;
+    long lastStepTime = 0, lastChangeTime = 0;
 
     public static boolean checkSystemSupport(Activity activity) {
 
@@ -127,7 +129,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR);
         gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
-
+        lastStepTime = System.currentTimeMillis();
+        lastChangeTime = System.currentTimeMillis();
         registerSensors();
 
         // Get route
@@ -149,7 +152,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             ni = 0;
         }
 
-        updateRouteGuide();
+//        updateRouteGuide();
 
         // Device size
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -301,8 +304,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 }else{
                     tanPitch = (1/Math.tan(Math.toRadians(Math.abs(pitch))));
                 }
-                if (tanPitch>1.5){
-                    tanPitch = 1.5;
+                if (tanPitch>0.5){
+                    tanPitch = 0.5;
                 }
                 d = 1.65 * tanPitch;
             }
@@ -406,13 +409,43 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 //                        "pitch: " + pitch
 //                );
 
+//                long currentMillis = System.currentTimeMillis();
+//                test.setText("diff step time: " + Math.abs(currentMillis - lastStepTime)+"\n"+
+//                        "diff changes time: " + Math.abs(currentMillis - lastChangeTime));
+                int timeThresh = 5000;
+                if (ni<=3){
+                    timeThresh = 10000;
+                }
+                if (Math.abs(lastStepTime-System.currentTimeMillis())>timeThresh &&
+                        Math.abs(lastChangeTime-System.currentTimeMillis())>timeThresh){
+                    // go next point
+                    lastChangeTime = System.currentTimeMillis();
+                    if (!route.finish(ni)){
+                        // TODO:1.?
+                        // TODO: current or view
+                        if (diffFromCurrentToNext.length()<1.5){
+
+                            ni = route.next(ni);
+//                        updateRouteGuide();
+                            angleBetweenTwoVectorList = new ArrayList<>();
+                            nextPointFrames = 0;
+                        }
+                    }else{
+                        // View point is on destination, put marker
+                        if (diffFromCurrentToNext.length()  <0.5){
+                            loadDestinationModel();
+                        }
+                    }
+                    modifyCurrent(prevPnt);
+                }
+
                 if (!route.finish(ni)){
                     // TODO:1.?
                     // TODO: current or view
                     if (diffFromCurrentToNext.length()<1.5){
 
                         ni = route.next(ni);
-                        updateRouteGuide();
+//                        updateRouteGuide();
                         angleBetweenTwoVectorList = new ArrayList<>();
                         nextPointFrames = 0;
                     }
@@ -559,8 +592,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         // TODO: use pitch to determine scale
         double scale = (Math.abs(pitch)+90)/180 + (1.); // max = 0.5, min = 1
         // TODO:
-        model.getScaleController().setMaxScale((float)scale*3/1000); // TODO: 6/1000
-        model.getScaleController().setMinScale((float)scale*2/1000); // TODO: 4/1000
+        model.getScaleController().setMaxScale((float)scale*6/1000); // TODO: 6/1000
+        model.getScaleController().setMinScale((float)scale*4/1000); // TODO: 4/1000
         // TODO: use pitch to determine distance
         double rayDis = Math.cos(Math.toRadians(Math.abs(pitch)))*10;
         model.setLocalPosition(ray.getPoint((float)rayDis));
@@ -587,6 +620,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         // TODO: check gyroX and gyroZ and check threshold also see the changes in stairs
         if (Math.abs(gyroY)<0.3 && Math.abs(gyroZ)<0.3 && Math.abs(gyroX)<0.3 ){
             stepDetector(event);
+        }else{
+            lastChangeTime = System.currentTimeMillis();
         }
 
     }
@@ -649,7 +684,16 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 // Increment step count here
                 stepCount++;
                 // update current
-                updateCurrent();
+                long currentMillis = System.currentTimeMillis();
+//                test.setText("current: "+ currentMillis+"\n"+
+//                        "last step: " + lastStepTime+ "\n"+
+//                        "diff step time: " + Math.abs(currentMillis - lastStepTime)+"\n"+
+//                        "diff changes time: " + Math.abs(currentMillis - lastChangeTime));
+                if (Math.abs(currentMillis - lastStepTime)>300){
+                    updateCurrent();
+                    lastStepTime = currentMillis;
+                    lastChangeTime = currentMillis;
+                }
 
             }
         }
