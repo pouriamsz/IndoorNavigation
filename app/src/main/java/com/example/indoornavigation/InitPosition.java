@@ -49,7 +49,7 @@ public class InitPosition extends AppCompatActivity {
 
 
     // Current position
-    Point currentPosition = new Point(0,0);
+    Point currentPosition = new Point(0,0, 0);
     int currentPoint = 0;
     private ArrayList<FingerPrint> fingerPrints = new ArrayList<>();
     private ArrayList<Router> routers = new ArrayList<>();

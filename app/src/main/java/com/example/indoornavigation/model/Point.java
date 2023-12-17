@@ -7,10 +7,10 @@ public class Point implements Serializable {
     public double y;
     double z;
 
-    public Point(double x, double y) {
+    public Point(double x, double y, double z) {
         this.x = x;
         this.y = y;
-        this.z = 0.0;
+        this.z = z;
     }
 
     // Set
@@ -44,7 +44,7 @@ public class Point implements Serializable {
     }
 
     public Point sub(Point p){
-        return new Point(this.x - p.getX(), this.y-p.getY());
+        return new Point(this.x - p.getX(), this.y-p.getY(), this.z - p.getZ());
     }
 
     public double norm() {

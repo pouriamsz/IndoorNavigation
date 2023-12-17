@@ -207,34 +207,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addGraphPoints(Graph _graph) {
-        _graph.addPoint(new Point(0.6, 0.6)); // 1
-        _graph.addPoint(new Point(0.6, 2.1)); // 2
-        _graph.addPoint(new Point(0.6, 3.6)); // 3
-        _graph.addPoint(new Point(0.6, 5.1)); // 4
-        _graph.addPoint(new Point(0.6, 6.6)); // 5
-        _graph.addPoint(new Point(0.6, 8.1)); // 6
-        _graph.addPoint(new Point(0.6, 11.1)); // 7
-        _graph.addPoint(new Point(0.6, 14.1)); // 8
-        _graph.addPoint(new Point(0.6, 17.1)); // 9
-        _graph.addPoint(new Point(0.6, 20.1)); // 10
-        _graph.addPoint(new Point(0.0, 27.3)); // 11
-        _graph.addPoint(new Point(3.0, 27.3)); // 12
-        _graph.addPoint(new Point(0.6, 27.3)); // 13
-        _graph.addPoint(new Point(2.1, 0.6)); // 14
-        _graph.addPoint(new Point(3.6, 0.6)); // 15
-        _graph.addPoint(new Point(5.1, 0.6)); // 16
-        _graph.addPoint(new Point(8.1, 0.6)); // 17
-        _graph.addPoint(new Point(2.1, 2.1)); // 18
-        _graph.addPoint(new Point(2.1, 3.6)); // 19
-        _graph.addPoint(new Point(3.6, 3.6)); // 20
-        _graph.addPoint(new Point(3.6, 2.1)); // 21
-        _graph.addPoint(new Point(5.1, 2.1)); // 22
-        _graph.addPoint(new Point(5.1, 3.6)); // 23
-        _graph.addPoint(new Point(6.6, 3.6)); // 24
-        _graph.addPoint(new Point(6.6, 2.1)); // 25
-        _graph.addPoint(new Point(8.1, 2.1)); // 26
-        _graph.addPoint(new Point(8.1, 3.6)); // 27
-        _graph.addPoint(new Point(9.6, 2.1)); // 28
+        _graph.addPoint(new Point(0.6, 0.6, 0)); // 1
+        _graph.addPoint(new Point(0.6, 2.1, 0)); // 2
+        _graph.addPoint(new Point(0.6, 3.6, 0)); // 3
+        _graph.addPoint(new Point(0.6, 5.1, 0)); // 4
+        _graph.addPoint(new Point(0.6, 6.6, 0)); // 5
+        _graph.addPoint(new Point(0.6, 8.1, 0)); // 6
+        _graph.addPoint(new Point(0.6, 11.1, 0)); // 7
+        _graph.addPoint(new Point(0.6, 14.1, 0)); // 8
+        _graph.addPoint(new Point(0.6, 17.1, 0)); // 9
+        _graph.addPoint(new Point(0.6, 20.1, 0)); // 10
+        _graph.addPoint(new Point(0.0, 27.3, 0)); // 11
+        _graph.addPoint(new Point(3.0, 27.3, 0)); // 12
+        _graph.addPoint(new Point(0.6, 27.3, 0)); // 13
+        _graph.addPoint(new Point(2.1, 0.6, 0)); // 14
+        _graph.addPoint(new Point(3.6, 0.6, 0)); // 15
+        _graph.addPoint(new Point(5.1, 0.6, 0)); // 16
+        _graph.addPoint(new Point(8.1, 0.6, 0)); // 17
+        _graph.addPoint(new Point(2.1, 2.1, 0)); // 18
+        _graph.addPoint(new Point(2.1, 3.6, 0)); // 19
+        _graph.addPoint(new Point(3.6, 3.6, 0)); // 20
+        _graph.addPoint(new Point(3.6, 2.1, 0)); // 21
+        _graph.addPoint(new Point(5.1, 2.1, 0)); // 22
+        _graph.addPoint(new Point(5.1, 3.6, 0)); // 23
+        _graph.addPoint(new Point(6.6, 3.6, 0)); // 24
+        _graph.addPoint(new Point(6.6, 2.1, 0)); // 25
+        _graph.addPoint(new Point(8.1, 2.1, 0)); // 26
+        _graph.addPoint(new Point(8.1, 3.6, 0)); // 27
+        _graph.addPoint(new Point(9.6, 2.1, 0)); // 28
     }
 
     public static List<Integer> dijkstra(int[][] graph, int startNode, int endNode) {
