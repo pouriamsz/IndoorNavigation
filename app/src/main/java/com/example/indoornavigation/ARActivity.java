@@ -15,6 +15,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +96,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private Sensor rotationSensor, gyroscopeSensor;
     float gyroY = 0, gyroX = 0, gyroZ = 0;
     long lastStepTime = 0, lastChangeTime = 0;
+    Button stuckBtn;
+    boolean forceNextPoint = false;
 
     public static boolean checkSystemSupport(Activity activity) {
 
@@ -122,6 +126,15 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         setContentView(R.layout.activity_ar);
 
         test = findViewById(R.id.textTxt);
+        stuckBtn = findViewById(R.id.stuckBtn);
+        stuckBtn.setVisibility(View.GONE);
+
+        stuckBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                forceNextPoint = true;
+            }
+        });
 
         //sensor manager & sensor required to calculate yaw
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -407,7 +420,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 //                                "distance to next point = "+ diffFromViewToNext.length() + "\n" +
 //                        "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
 //                        "is rotation :" + isARotationPoint + "\n" +
-//                        "pitch: " + pitch
+//                        "pitch: " + pitch + "\n"+
+//                        "stuck = " + forceNextPoint
 //                );
 
 //                long currentMillis = System.currentTimeMillis();
@@ -418,24 +432,22 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                     timeThresh = 10000;
                 }
                 if (Math.abs(lastStepTime-System.currentTimeMillis())>timeThresh &&
-                        Math.abs(lastChangeTime-System.currentTimeMillis())>timeThresh){
+                        Math.abs(lastChangeTime-System.currentTimeMillis())>timeThresh) {
+                    stuckBtn.setVisibility(View.VISIBLE);
+                }
+                if (forceNextPoint){
                     // go next point
                     lastChangeTime = System.currentTimeMillis();
+                    forceNextPoint = false;
+                    stuckBtn.setVisibility(View.GONE);
                     if (!route.finish(ni)){
-                        // TODO:1.?
-                        // TODO: current or view
-                        if (diffFromCurrentToNext.length()<1.5){
-
-                            ni = route.next(ni);
+                        ni = route.next(ni);
                         updateRouteGuide();
-                            angleBetweenTwoVectorList = new ArrayList<>();
-                            nextPointFrames = 0;
-                        }
+                        angleBetweenTwoVectorList = new ArrayList<>();
+                        nextPointFrames = 0;
                     }else{
                         // View point is on destination, put marker
-                        if (diffFromCurrentToNext.length()  <0.5){
-                            loadDestinationModel();
-                        }
+                        loadDestinationModel();
                     }
                     modifyCurrent(prevPnt);
                 }
