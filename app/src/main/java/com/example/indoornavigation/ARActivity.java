@@ -460,6 +460,8 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 if (Math.abs(lastStepTime-System.currentTimeMillis())>timeThresh &&
                         Math.abs(lastChangeTime-System.currentTimeMillis())>timeThresh) {
                     stuckBtn.setVisibility(View.VISIBLE);
+                }else{
+                    stuckBtn.setVisibility(View.GONE);
                 }
                 if (forceNextPoint){
                     // go next point
