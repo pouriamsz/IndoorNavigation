@@ -65,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
             "آز فتوگرامتری پهپاد",
             "بایگانی",
             "آز خدمات مکان مبنا",
+            "کلاس 1",
+            "کلاس 2",
+            "کلاس 3",
+            "کلاس 4",
+            "کلاس 5",
+
     };
     int selectedDes = 0;
     AutoCompleteTextView autoCompleteTextView;
@@ -204,6 +210,56 @@ public class MainActivity extends AppCompatActivity {
         graphBlind.connect(26,new int[]{17, 27, 28});
         graphBlind.connect(27,new int[]{24, 26});
         graphBlind.connect(28,new int[]{26});
+        graphBlind.connect(29,new int[]{23, 30});
+        graphBlind.connect(30,new int[]{29, 31});
+        graphBlind.connect(31,new int[]{30, 32});
+        graphBlind.connect(32,new int[]{33, 34});
+        graphBlind.connect(33,new int[]{32});
+        graphBlind.connect(34,new int[]{32, 35});
+        graphBlind.connect(35,new int[]{34, 36});
+        graphBlind.connect(36,new int[]{35, 37});
+        graphBlind.connect(37,new int[]{36});
+
+    }
+
+    private void graphConnections() {
+        graph.connect(1,new int[]{2,14});
+        graph.connect(2,new int[]{1,3, 18});
+        graph.connect(3,new int[]{2,4, 19});
+        graph.connect(4,new int[]{3,5});
+        graph.connect(5,new int[]{4,6});
+        graph.connect(6,new int[]{5,7});
+        graph.connect(7,new int[]{6,8});
+        graph.connect(8,new int[]{7,9});
+        graph.connect(9,new int[]{8,10});
+        graph.connect(10,new int[]{9, 13});
+        graph.connect(11,new int[]{13});
+        graph.connect(12,new int[]{13});
+        graph.connect(13,new int[]{11, 12, 10});
+        graph.connect(14,new int[]{1, 18, 15});
+        graph.connect(15,new int[]{14, 16, 21});
+        graph.connect(16,new int[]{15, 22});
+        graph.connect(17,new int[]{26});
+        graph.connect(18,new int[]{2, 14, 19, 21});
+        graph.connect(19,new int[]{3, 18, 20});
+        graph.connect(20,new int[]{19, 21, 23});
+        graph.connect(21,new int[]{18, 20, 22, 15});
+        graph.connect(22,new int[]{21, 23, 25, 16});
+        graph.connect(23,new int[]{20, 22, 24});
+        graph.connect(24,new int[]{23, 25, 27});
+        graph.connect(25,new int[]{22, 24, 26});
+        graph.connect(26,new int[]{17, 25, 27, 28});
+        graph.connect(27,new int[]{24, 26});
+        graph.connect(28,new int[]{26});
+        graph.connect(29,new int[]{23, 30});
+        graph.connect(30,new int[]{29, 31});
+        graph.connect(31,new int[]{30, 32});
+        graph.connect(32,new int[]{33, 34});
+        graph.connect(33,new int[]{32});
+        graph.connect(34,new int[]{32, 35});
+        graph.connect(35,new int[]{34, 36});
+        graph.connect(36,new int[]{35, 37});
+        graph.connect(37,new int[]{36});
     }
 
     private void addGraphPoints(Graph _graph) {
@@ -235,6 +291,16 @@ public class MainActivity extends AppCompatActivity {
         _graph.addPoint(new Point(8.1, 2.1, 0)); // 26
         _graph.addPoint(new Point(8.1, 3.6, 0)); // 27
         _graph.addPoint(new Point(9.6, 2.1, 0)); // 28
+        _graph.addPoint(new Point(5.1, 4.8, 0)); // 29
+        _graph.addPoint(new Point(5.1, 4.8, 1)); // 30
+        _graph.addPoint(new Point(5.1, 3.5, 1)); // 31
+        _graph.addPoint(new Point(-0.9, 3.5, 1)); // 32
+        _graph.addPoint(new Point(-0.9, 1.1, 1)); // 33
+        _graph.addPoint(new Point(-0.9, 11.1, 1)); // 34
+        _graph.addPoint(new Point(-0.9, 18.5, 1)); // 35
+        _graph.addPoint(new Point(-0.9, 27.5, 1)); // 36
+        _graph.addPoint(new Point(-0.9, 38, 1)); // 37
+
     }
 
     public static List<Integer> dijkstra(int[][] graph, int startNode, int endNode) {
@@ -286,36 +352,6 @@ public class MainActivity extends AppCompatActivity {
         return route;
     }
 
-    private void graphConnections() {
-        graph.connect(1,new int[]{2,14});
-        graph.connect(2,new int[]{1,3, 18});
-        graph.connect(3,new int[]{2,4, 19});
-        graph.connect(4,new int[]{3,5});
-        graph.connect(5,new int[]{4,6});
-        graph.connect(6,new int[]{5,7});
-        graph.connect(7,new int[]{6,8});
-        graph.connect(8,new int[]{7,9});
-        graph.connect(9,new int[]{8,10});
-        graph.connect(10,new int[]{9, 13});
-        graph.connect(11,new int[]{13});
-        graph.connect(12,new int[]{13});
-        graph.connect(13,new int[]{11, 12, 10});
-        graph.connect(14,new int[]{1, 18, 15});
-        graph.connect(15,new int[]{14, 16, 21});
-        graph.connect(16,new int[]{15, 22});
-        graph.connect(17,new int[]{26});
-        graph.connect(18,new int[]{2, 14, 19, 21});
-        graph.connect(19,new int[]{3, 18, 20});
-        graph.connect(20,new int[]{19, 21, 23});
-        graph.connect(21,new int[]{18, 20, 22, 15});
-        graph.connect(22,new int[]{21, 23, 25, 16});
-        graph.connect(23,new int[]{20, 22, 24});
-        graph.connect(24,new int[]{23, 25, 27});
-        graph.connect(25,new int[]{22, 24, 26});
-        graph.connect(26,new int[]{17, 25, 27, 28});
-        graph.connect(27,new int[]{24, 26});
-        graph.connect(28,new int[]{26});
-    }
 
     private void getDestination(int position) {
         switch (position){
@@ -348,6 +384,21 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 9:
                 selectedDes = 28;
+                break;
+            case 10:
+                selectedDes = 33;
+                break;
+            case 11:
+                selectedDes = 34;
+                break;
+            case 12:
+                selectedDes = 35;
+                break;
+            case 13:
+                selectedDes = 36;
+                break;
+            case 14:
+                selectedDes = 37;
                 break;
         }
     }

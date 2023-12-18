@@ -169,7 +169,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             ni = 0;
         }
 
-        updateRouteGuide();
+//        updateRouteGuide();
 
         // Device size
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -380,7 +380,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
 
             // TODO: comment this
-//            angleBetweenTwoVector = modifyAngle(angleBetweenTwoVector);
+            angleBetweenTwoVector = modifyAngle(angleBetweenTwoVector);
             // TODO: 140?
             if (Math.toDegrees(angleBetweenTwoVector)>150 && !stairUp && !stairDown){
                 if (isARotationPoint  && afterTrueFrames>3){
@@ -438,17 +438,19 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
             if (ni!=0){
                 // to debug
-//                test.setText("yaw = "+ yaw +
-//                                "Diff yaw = " + (yaw-originYaw) + "\n"+
-//                                "current = " + current.getX()+", "+ current.getY()+"\n"+
-//                                "view = " +viewPoint.getX()+", "+viewPoint.getY()+"\n"+
-//                          "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ "\n"+
-//                                "distance to next point = "+ diffFromViewToNext.length() + "\n" +
-//                        "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
-//                        "is rotation :" + isARotationPoint + "\n" +
-//                        "pitch: " + pitch + "\n"+
-//                        "stuck = " + forceNextPoint
-//                );
+                test.setText("yaw = "+ yaw +
+                                "Diff yaw = " + (yaw-originYaw) + "\n"+
+                                "current = " + current.getX()+", "+ current.getY()+ ", "+ current.getZ() +"\n"+
+                                "view = " +viewPoint.getX()+", "+viewPoint.getY()+  ", "+ viewPoint.getZ()+ "\n"+
+                          "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ ", "+ nextPnt.getZ() + "\n"+
+                                "distance to next point = "+ diffFromViewToNext.length() + "\n" +
+                        "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
+                        "is rotation :" + isARotationPoint + "\n" +
+                        "pitch: " + pitch + "\n"+
+                        "stuck = " + forceNextPoint+ "\n"+
+                        "angleBetweenTwoVector => "+ Math.toDegrees(angleBetweenTwoVector)+"\n"+
+                        "ni => "+ ni
+                );
 
 //                long currentMillis = System.currentTimeMillis();
 //                test.setText("diff step time: " + Math.abs(currentMillis - lastStepTime)+"\n"+
@@ -471,25 +473,26 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                     if (!route.finish(ni)){
                         ni = route.next(ni);
                         // check stairs
-                        nextPnt = new Vertex(route.getPoints().get(ni).getX(),
+                        Vertex nextPntC = new Vertex(route.getPoints().get(ni).getX(),
                                 route.getPoints().get(ni).getY(),
                                 route.getPoints().get(ni).getZ());
+                        Vertex prevPntC = new Vertex(0,0,0);
                         if (ni>0){
-                            prevPnt = new Vertex(route.getPoints().get(ni-1).getX(),
+                            prevPntC = new Vertex(route.getPoints().get(ni-1).getX(),
                                     route.getPoints().get(ni-1).getY(),
                                     route.getPoints().get(ni).getZ());
                         }else{
-                            prevPnt = new Vertex(route.getPoints().get(ni).getX(),
+                            prevPntC = new Vertex(route.getPoints().get(ni).getX(),
                                     route.getPoints().get(ni).getY(),
                                     route.getPoints().get(ni).getZ());
                         }
-                        if (nextPnt.getZ()-prevPnt.getZ()== 1){
+                        if (nextPntC.getZ()-prevPntC.getZ()== 1){
                             stairUp =true;
-                        }else if (nextPnt.getZ()-prevPnt.getZ()== -1){
+                        }else if (nextPntC.getZ()-prevPntC.getZ()== -1){
                             stairDown = true;
                         }
                         stairFinish = false;
-                        updateRouteGuide();
+//                        updateRouteGuide();
                         angleBetweenTwoVectorList = new ArrayList<>();
                         nextPointFrames = 0;
                     }else{
@@ -506,26 +509,27 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
                         ni = route.next(ni);
                         // check stairs
-                        nextPnt = new Vertex(route.getPoints().get(ni).getX(),
+                        Vertex nextPntC = new Vertex(route.getPoints().get(ni).getX(),
                                 route.getPoints().get(ni).getY(),
                                 route.getPoints().get(ni).getZ());
+                        Vertex prevPntC = new Vertex(0,0,0);
                         if (ni>0){
-                            prevPnt = new Vertex(route.getPoints().get(ni-1).getX(),
+                            prevPntC = new Vertex(route.getPoints().get(ni-1).getX(),
                                     route.getPoints().get(ni-1).getY(),
                                     route.getPoints().get(ni).getZ());
                         }else{
-                            prevPnt = new Vertex(route.getPoints().get(ni).getX(),
+                            prevPntC = new Vertex(route.getPoints().get(ni).getX(),
                                     route.getPoints().get(ni).getY(),
                                     route.getPoints().get(ni).getZ());
                         }
-                        if (nextPnt.getZ()-prevPnt.getZ()== 1){
+                        if (nextPntC.getZ()-prevPntC.getZ()== 1){
                             stairUp =true;
-                        }else if (nextPnt.getZ()-prevPnt.getZ()== -1){
+                        }else if (nextPntC.getZ()-prevPntC.getZ()== -1){
                             stairDown = true;
                         }
                         stairFinish = false;
 
-                        updateRouteGuide();
+//                        updateRouteGuide();
                         angleBetweenTwoVectorList = new ArrayList<>();
                         nextPointFrames = 0;
                     }
@@ -549,7 +553,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private void modifyCurrent(Vertex prevPnt) {
         current.setY(prevPnt.getY());
         current.setX(prevPnt.getX());
-        current.setZ(prevPnt.getY());
+        current.setZ(prevPnt.getZ());
 //        // left
 //        if (yaw>230 && yaw <300){
 //            current.setY(prevPnt.getY());
@@ -576,7 +580,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     private double modifyAngle(double angleBetweenTwoVector) {
         double meanAngle = 0.;
         if (angleBetweenTwoVectorList.size()>0){
-            if (angleBetweenTwoVectorList.size()>10){
+            if (angleBetweenTwoVectorList.size()>5){
                 angleBetweenTwoVectorList.remove(0);
             }
             angleBetweenTwoVectorList.add(angleBetweenTwoVector);
