@@ -338,7 +338,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             }
             viewPoint = vertexCurrent.add(new Vertex(d*Math.sin(Math.toRadians(yaw-originYaw)),
                     d*Math.cos(Math.toRadians(yaw-originYaw)),
-                    vertexCurrent.getZ()));
+                    0));
 
 
             Vertex nextPnt = new Vertex(route.getPoints().get(ni).getX(),
@@ -348,7 +348,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             if (ni>0){
                 prevPnt = new Vertex(route.getPoints().get(ni-1).getX(),
                         route.getPoints().get(ni-1).getY(),
-                        route.getPoints().get(ni).getZ());
+                        route.getPoints().get(ni-1).getZ());
             }else{
                 prevPnt = new Vertex(route.getPoints().get(ni).getX(),
                         route.getPoints().get(ni).getY(),
@@ -380,7 +380,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
 
             // TODO: comment this
-            angleBetweenTwoVector = modifyAngle(angleBetweenTwoVector);
+//            angleBetweenTwoVector = modifyAngle(angleBetweenTwoVector);
             // TODO: 140?
             if (Math.toDegrees(angleBetweenTwoVector)>150 && !stairUp && !stairDown){
                 if (isARotationPoint  && afterTrueFrames>3){
@@ -398,7 +398,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 rotationDegree = Math.PI;
             }else if (stairDown){
                 rotationDegree = 0.0;
-            }else if (Math.toDegrees(angleBetweenTwoVector)>150){
+            }else if (Math.toDegrees(angleBetweenTwoVector)>130){
 
                 rotationDegree = Math.PI;
             }else{
@@ -416,12 +416,11 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 //                            "current : " + current.getX() + ", "+ current.getY());
                 }
             }
-            // TODO: 45 and 135?
             if (stairUp || stairDown){
-                faceToBed = Quaternion.axisAngle(Vector3.right(), 90f);
-                lookFromViewToNext = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
 
-                finalQ = Quaternion.multiply(lookFromViewToNext, faceToBed );
+                finalQ = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
+
+                // TODO: 45 and 135?
             } else if (Math.toDegrees(angleBetweenTwoVector)>35 &&  Math.toDegrees(angleBetweenTwoVector)<125){
 
                 finalQ = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
@@ -449,8 +448,14 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                         "pitch: " + pitch + "\n"+
                         "stuck = " + forceNextPoint+ "\n"+
                         "angleBetweenTwoVector => "+ Math.toDegrees(angleBetweenTwoVector)+"\n"+
-                        "ni => "+ ni
-                );
+                        "ni => "+ ni+"\n"+
+                        "rotationDegree => "+ rotationDegree+"\n" +
+                        "stair => "+ stairUp + " - " + stairDown + "\n" +
+                        "count stairs => "+ countStair+"\n" +
+                        "directionFromViewToNext => " + directionFromViewToNext.getX() + ", " + directionFromViewToNext.getY() + ", "+ directionFromViewToNext.getZ()+"\n"+
+                                "directionFromViewToCurrent => " + directionFromViewToCurrent.getX() + ", " + directionFromViewToCurrent.getY() + ", "+ directionFromViewToCurrent.getZ()
+
+                        );
 
 //                long currentMillis = System.currentTimeMillis();
 //                test.setText("diff step time: " + Math.abs(currentMillis - lastStepTime)+"\n"+
@@ -480,7 +485,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                         if (ni>0){
                             prevPntC = new Vertex(route.getPoints().get(ni-1).getX(),
                                     route.getPoints().get(ni-1).getY(),
-                                    route.getPoints().get(ni).getZ());
+                                    route.getPoints().get(ni-1).getZ());
                         }else{
                             prevPntC = new Vertex(route.getPoints().get(ni).getX(),
                                     route.getPoints().get(ni).getY(),
@@ -505,8 +510,10 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 if (!route.finish(ni)){
                     // TODO:1.?
                     // TODO: current or view
-                    if (diffFromCurrentToNext.length()<1.5 || stairFinish){
-
+                    if (diffFromCurrentToNext.length()<1.0 || stairFinish){
+                        if (stairFinish){
+                            modifyCurrentStair(prevPnt, nextPnt);
+                        }
                         ni = route.next(ni);
                         // check stairs
                         Vertex nextPntC = new Vertex(route.getPoints().get(ni).getX(),
@@ -516,7 +523,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                         if (ni>0){
                             prevPntC = new Vertex(route.getPoints().get(ni-1).getX(),
                                     route.getPoints().get(ni-1).getY(),
-                                    route.getPoints().get(ni).getZ());
+                                    route.getPoints().get(ni-1).getZ());
                         }else{
                             prevPntC = new Vertex(route.getPoints().get(ni).getX(),
                                     route.getPoints().get(ni).getY(),
@@ -547,6 +554,13 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 }
             }
         }
+
+    }
+
+    private void modifyCurrentStair(Vertex prevPnt, Vertex nextPnt) {
+        current.setX(prevPnt.getX());
+        current.setY(prevPnt.getY());
+        current.setZ(nextPnt.getZ());
 
     }
 
@@ -703,7 +717,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         getSensorData(event);
         rotation();
         // TODO: check gyroX and gyroZ and check threshold also see the changes in stairs
-        if (Math.abs(gyroY)<0.3 && Math.abs(gyroZ)<0.3 && Math.abs(gyroX)<0.3 ){
+        if ((Math.abs(gyroY)<0.3 && Math.abs(gyroZ)<0.3 && Math.abs(gyroX)<0.3 ) || stairUp || stairDown){
             stepDetector(event);
         }else{
             lastChangeTime = System.currentTimeMillis();
@@ -778,29 +792,21 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                     if(!stairDown && !stairUp){
                         updateCurrent();
                     }else if (stairUp){
-                        if (accels[2]>10){
-                            countStair++;
-                        }else if (accels[2]<-10){
-                            countStair--;
-                        }
+                        countStair+=1;
 
-                        if (countStair>15){
+                        if (countStair>20){
                             stairFinish = true;
                             stairUp = false;
-                            current.setZ(route.getPoints().get(ni).getZ());
+//                            current.setZ(route.getPoints().get(ni).getZ());
                             countStair = 0;
                         }
                     }else if (stairDown){
-                        if (accels[2]>10){
-                            countStair--;
-                        }else if (accels[2]<-10){
-                            countStair++;
-                        }
+                        countStair+=1;
 
-                        if (countStair>15){
+                        if (countStair>20){
                             stairFinish = true;
                             stairDown = false;
-                            current.setZ(route.getPoints().get(ni).getZ());
+//                            current.setZ(route.getPoints().get(ni).getZ());
                             countStair = 0;
                         }
                     }

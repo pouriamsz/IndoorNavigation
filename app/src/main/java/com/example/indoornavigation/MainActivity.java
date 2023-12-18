@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
     // Route
     Button directionBtn;
     private static final int INF = Integer.MAX_VALUE;
-    Graph graph = new Graph(28, 28);
-    Graph graphBlind = new Graph(28, 28);
+    Graph graph = new Graph(37, 37);
+    Graph graphBlind = new Graph(37, 37);
 
     List<Integer> route = new ArrayList<>();
 
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         graphBlind.connect(20,new int[]{19, 21, 23});
         graphBlind.connect(21,new int[]{20});
         graphBlind.connect(22,new int[]{23});
-        graphBlind.connect(23,new int[]{20, 22, 24});
+        graphBlind.connect(23,new int[]{20, 22, 24, 29});
         graphBlind.connect(24,new int[]{23, 25, 27});
         graphBlind.connect(25,new int[]{24});
         graphBlind.connect(26,new int[]{17, 27, 28});
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
         graph.connect(20,new int[]{19, 21, 23});
         graph.connect(21,new int[]{18, 20, 22, 15});
         graph.connect(22,new int[]{21, 23, 25, 16});
-        graph.connect(23,new int[]{20, 22, 24});
+        graph.connect(23,new int[]{20, 22, 24, 29});
         graph.connect(24,new int[]{23, 25, 27});
         graph.connect(25,new int[]{22, 24, 26});
         graph.connect(26,new int[]{17, 25, 27, 28});
