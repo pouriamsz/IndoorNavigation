@@ -102,6 +102,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     boolean stairDown = false;
     boolean stairFinish = false;
     int countStair = 0;
+    Button finishStairsBtn;
 
     public static boolean checkSystemSupport(Activity activity) {
 
@@ -132,6 +133,17 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         test = findViewById(R.id.textTxt);
         stuckBtn = findViewById(R.id.stuckBtn);
         stuckBtn.setVisibility(View.GONE);
+        finishStairsBtn = findViewById(R.id.finishFloor);
+        finishStairsBtn.setVisibility(View.GONE);
+
+        finishStairsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stairFinish = true;
+                stairUp = false;
+                stairDown = false;
+            }
+        });
 
         stuckBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -301,6 +313,13 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     }
 
     private void updateNode() {
+
+        if (stairDown || stairUp){
+            finishStairsBtn.setVisibility(View.VISIBLE);
+        }
+        if (stairFinish){
+            finishStairsBtn.setVisibility(View.GONE);
+        }
 
         if (oldNode==null) {
             return;
