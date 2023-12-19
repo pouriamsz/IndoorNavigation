@@ -211,6 +211,14 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             // we are at destination already
             return;
         }
+        if (stairUp){
+            test.setText("Go up the stairs");
+            return;
+        }else if (stairDown){
+            test.setText("Go down the stairs");
+            return;
+        }
+
         int np = ni;
         // current point id
         int cp = ni-1;
