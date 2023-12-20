@@ -9,25 +9,23 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="638dp">
 
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="619dp"
             android:gravity="top"
             android:orientation="vertical"
             android:padding="10dp">
 
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:hint="Select Destination"
-                style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                >
+                android:hint="Select Destination">
 
                 <AutoCompleteTextView
                     android:id="@+id/autoCompleteText"
@@ -42,41 +40,93 @@
 
             <CheckBox
                 android:id="@+id/checkBox"
-                android:layout_width="378dp"
+                android:layout_width="310dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="37dp"
+                android:layout_marginBottom="471dp"
                 android:text="Use blind mode" />
 
             <Button
                 android:id="@+id/directionBtn"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="100dp"
+                android:layout_marginBottom="412dp"
                 android:text="Direction"
                 android:textAllCaps="false" />
 
             <TextView
                 android:id="@+id/testTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
+                android:layout_width="99dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
                 android:layout_gravity="center"
-                android:layout_marginTop="50dp"
 
-                />
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="142dp"
+                android:layout_marginBottom="342dp"
+                android:text="" />
 
             <Button
                 android:id="@+id/openCamera"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="250dp"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
                 android:layout_gravity="center"
-                android:layout_marginTop="350dp"
+                android:layout_marginTop="250dp"
+                android:layout_marginEnd="66dp"
+                android:layout_marginBottom="7dp"
                 android:text="Open Camera"
                 android:textAllCaps="false" />
 
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="18dp">
+
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="152dp"
+            android:src="@drawable/circle" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="222dp"
+            android:src="@drawable/circle" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="187dp"
+            android:src="@drawable/splash" />
+
+
+    </RelativeLayout>
 
 </LinearLayout>

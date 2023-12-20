@@ -9,27 +9,32 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="128dp"
+        android:layout_marginBottom="251dp"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/scanQRBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Scan QR code" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="\n\n"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\n\n" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Can't find any QR code?\nUse the following button." />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""/>
+            android:text="" />
 
         <Button
             android:id="@+id/updateCurrent"
@@ -41,10 +46,11 @@
             android:id="@+id/edtInitPosition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""/>
+            android:text="" />
 
         <Button
             android:id="@+id/nextStepBtn"
@@ -54,4 +60,42 @@
 
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="18dp">
+
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="233dp"
+            android:src="@drawable/circle" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="163dp"
+            android:src="@drawable/circle" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="198dp"
+            android:src="@drawable/splash" />
+
+
+    </RelativeLayout>
+
 </RelativeLayout>

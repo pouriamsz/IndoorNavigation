@@ -24,16 +24,54 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp" />
 
-    <ImageButton
-        android:id="@+id/addUserBtn"
-        android:layout_width="52dp"
-        android:layout_height="47dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:background="@android:color/transparent"
-        app:borderWidth="0dp"
-        app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_input_add" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ImageButton
+            android:id="@+id/addUserBtn"
+            android:layout_width="52dp"
+            android:layout_height="47dp"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="bottom|end"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="16dp"
+            android:background="@android:color/transparent"
+            app:borderWidth="0dp"
+            app:srcCompat="@android:drawable/ic_input_add" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="233dp"
+            android:src="@drawable/splash" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="163dp"
+            android:src="@drawable/circle" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="33dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="198dp"
+            android:src="@drawable/circle" />
+
+
+    </RelativeLayout>
 
 
 
