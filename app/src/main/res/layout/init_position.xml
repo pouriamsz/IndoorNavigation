@@ -19,7 +19,8 @@
             android:id="@+id/scanQRBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Scan QR code" />
+            android:text="Scan QR code"
+            android:backgroundTint="#F44336"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,6 +30,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:textSize="20sp"
             android:text="Can't find any QR code?\nUse the following button." />
 
         <TextView
@@ -40,12 +44,14 @@
             android:id="@+id/updateCurrent"
             android:layout_width="166dp"
             android:layout_height="wrap_content"
-            android:text="Where am I?" />
+            android:text="Where am I?"
+            android:backgroundTint="#F44336"/>
 
         <EditText
             android:id="@+id/edtInitPosition"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textAlignment="center"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,7 +62,8 @@
             android:id="@+id/nextStepBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Next Step" />
+            android:text="Next Step"
+            android:backgroundTint="#F44336"/>
 
 
     </LinearLayout>
