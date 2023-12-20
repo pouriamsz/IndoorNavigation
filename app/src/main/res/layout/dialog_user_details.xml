@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:text="Name"
+        android:hint="Name"
         android:id="@+id/nameEdt"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -20,7 +20,7 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/mosaicEdt"
-        android:text="Mosaic Number"
+        android:hint="Mosaic Number"
         android:layout_below="@+id/nameEdt"
         android:layout_centerHorizontal="true" />
 
@@ -30,7 +30,7 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/strideEdt"
-        android:text="Stride Number"
+        android:hint="Stride Number"
         android:layout_below="@+id/mosaicEdt"
         android:layout_centerHorizontal="true" />
 
