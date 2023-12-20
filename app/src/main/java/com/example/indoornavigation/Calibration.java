@@ -71,13 +71,6 @@ public class Calibration extends AppCompatActivity implements OnUserUpdateListen
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Log.d("User_List_Activity", "click position: " + position);
-
-                Bundle mBundle = new Bundle();
-                mBundle.putString("user_name", userList.get(position));
-                mBundle.putFloat("stride_length", Float.parseFloat(strideList.get(position)));
-
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
