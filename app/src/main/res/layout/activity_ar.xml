@@ -34,19 +34,23 @@
         android:layout_marginStart="18dp"
         android:layout_marginEnd="253dp"
         android:layout_marginBottom="17dp"
+        android:textColor="@color/white"
+        android:backgroundTint="#F44336"
         android:text="Are you stuck?" />
 
     <Button
         android:id="@+id/finishFloor"
-        android:layout_width="140dp"
+        android:layout_width="162dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="254dp"
+        android:layout_marginStart="233dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Have you finished the stairs?" />
+        android:text="Have you finished the stairs?"
+        android:backgroundTint="#F44336"
+        android:textColor="@color/white" />
 
 
 </RelativeLayout>

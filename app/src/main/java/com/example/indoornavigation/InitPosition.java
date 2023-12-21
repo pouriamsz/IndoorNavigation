@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCaller;
@@ -45,7 +47,7 @@ import java.util.List;
 public class InitPosition extends AppCompatActivity {
 
     Button scanQRBtn, updateCurrentBtn, nextStepBtn;
-    EditText initPositionEdt;
+    TextView initPositionEdt;
 
 
     // Current position
@@ -136,7 +138,10 @@ public class InitPosition extends AppCompatActivity {
 
         if (result.getContents()!=null){
             currentPoint = Integer.valueOf(result.getContents());
-            initPositionEdt.setText("" + currentPoint);
+            initPositionEdt.setText("" + currentPoint + "\n" +
+                    "Fine, let's go next step");
+            initPositionEdt.setTextColor(Color.rgb(0, 255, 0));
+
         }
 
     });
@@ -220,7 +225,9 @@ public class InitPosition extends AppCompatActivity {
         currentPosition.setX(fpMin.getX());
         currentPosition.setY(fpMin.getY());
         currentPoint = fpMin.getNumber();
-        initPositionEdt.setText( "n : " + currentPoint);
+        initPositionEdt.setText("" + currentPoint + "\n" +
+                "Fine, let's go next step");
+        initPositionEdt.setTextColor(Color.rgb(0, 255, 0));
     }
 
 

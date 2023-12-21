@@ -7,14 +7,10 @@
     android:padding="10dp"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="638dp">
-
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="619dp"
+            android:layout_height="match_parent"
             android:gravity="top"
             android:orientation="vertical"
             android:padding="10dp">
@@ -44,24 +40,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="37dp"
-                android:layout_marginBottom="471dp"
-                android:text="Use blind mode"
-                />
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="568dp"
+                android:text="Use blind mode" />
 
-            <Button
-                android:id="@+id/directionBtn"
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="100dp"
-                android:layout_marginBottom="412dp"
-                android:text="Direction"
-                android:textAllCaps="false"
-                android:backgroundTint="#F44336"/>
 
             <TextView
                 android:id="@+id/testTxt"
@@ -76,6 +58,7 @@
                 android:layout_marginBottom="342dp"
                 android:text="" />
 
+
             <Button
                 android:id="@+id/openCamera"
                 android:layout_width="250dp"
@@ -84,52 +67,52 @@
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="center"
                 android:layout_marginTop="250dp"
-                android:layout_marginEnd="66dp"
-                android:layout_marginBottom="7dp"
+                android:layout_marginEnd="65dp"
+                android:layout_marginBottom="116dp"
+                android:backgroundTint="#F44336"
                 android:text="Open Camera"
-                android:textAllCaps="false"
-                android:backgroundTint="#F44336"/>
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="18dp">
+
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="33dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginEnd="152dp"
+                    android:src="@drawable/splash" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="33dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginEnd="222dp"
+                    android:src="@drawable/circle" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="33dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginEnd="187dp"
+                    android:src="@drawable/circle" />
+
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
-    </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="18dp">
-
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="33dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="26dp"
-            android:layout_marginEnd="152dp"
-            android:src="@drawable/splash" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="33dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="26dp"
-            android:layout_marginEnd="222dp"
-            android:src="@drawable/circle" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="33dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="26dp"
-            android:layout_marginEnd="187dp"
-            android:src="@drawable/circle" />
-
-
-    </RelativeLayout>
 
 </LinearLayout>

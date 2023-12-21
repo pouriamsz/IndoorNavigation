@@ -744,6 +744,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         getSensorData(event);
         rotation();
         // TODO: check gyroX and gyroZ and check threshold also see the changes in stairs
+        // I want to detect step in stairs even gyros are greater than 0.3
         if ((Math.abs(gyroY)<0.3 && Math.abs(gyroZ)<0.3 && Math.abs(gyroX)<0.3 ) || stairUp || stairDown){
             stepDetector(event);
         }else{
@@ -815,7 +816,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 //                        "last step: " + lastStepTime+ "\n"+
 //                        "diff step time: " + Math.abs(currentMillis - lastStepTime)+"\n"+
 //                        "diff changes time: " + Math.abs(currentMillis - lastChangeTime));
-                if (Math.abs(currentMillis - lastStepTime)>300){
+                if (Math.abs(currentMillis - lastStepTime)>200){
                     if(!stairDown && !stairUp){
                         updateCurrent();
                     }else if (stairUp){

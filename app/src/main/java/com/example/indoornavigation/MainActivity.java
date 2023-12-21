@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
     int currentPoint = 0;
 
     // Route
-    Button directionBtn;
     private static final int INF = Integer.MAX_VALUE;
     Graph graph = new Graph(37, 37);
     Graph graphBlind = new Graph(37, 37);
@@ -103,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
 
         blindCheck = findViewById(R.id.checkBox);
         testTxt = findViewById(R.id.testTxt);
-        directionBtn = findViewById(R.id.directionBtn);
         openCamera = findViewById(R.id.openCamera);
 
 
@@ -125,7 +123,8 @@ public class MainActivity extends AppCompatActivity {
         graphConnections();
         graphBlindConnections();
 
-        directionBtn.setOnClickListener(new View.OnClickListener() {
+
+        openCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Graph usedGraph;
@@ -138,20 +137,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (currentPoint!=0 && selectedDes!=0){
                     route = dijkstra(usedGraph.getGraph(), currentPoint-1, selectedDes-1);
-                    String routeString = "";
-                    for (Integer i: route) {
-                        routeString += i+"-";
-                    }
-                    testTxt.setText("" + routeString);
+//                    String routeString = "";
+//                    for (Integer i: route) {
+//                        routeString += i+"-";
+//                    }
+//                    testTxt.setText("" + routeString);
                 }
-            }
-        });
 
-
-
-        openCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 try {
                     if (route != null && route.size()>0){
                         new Handler().postDelayed(new Runnable() {
