@@ -82,7 +82,9 @@ public class InitPosition extends AppCompatActivity {
 
         // Load Finger Prints
         for (int i = 1; i < 3; i++) {
-            String fileName = "hawx" + i + ".json";
+            String fileName = "fp" + i + ".json";
+            getFingerPrints(fileName);
+            fileName = "hawx" + i + ".json";
             getFingerPrints(fileName);
         }
 
