@@ -18,10 +18,15 @@
         tools:ignore="MissingClass" />
 
     <TextView
-        android:id="@+id/textTxt"
+        android:id="@+id/guideText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text=""
+        android:textAlignment="center"
+        android:textSize="32sp"
+        android:textColor="#F44336"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
         />
 
     <Button

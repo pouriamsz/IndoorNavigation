@@ -35,14 +35,13 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class ARActivity extends AppCompatActivity implements SensorEventListener {
 
     // UI
-    TextView test;
+    TextView guideText;
 
     // Current location
     Point current = new Point(0,0, 0);
@@ -130,7 +129,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ar);
 
-        test = findViewById(R.id.textTxt);
+        guideText = findViewById(R.id.guideText);
         stuckBtn = findViewById(R.id.stuckBtn);
         stuckBtn.setVisibility(View.GONE);
         finishStairsBtn = findViewById(R.id.finishFloor);
@@ -181,7 +180,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             ni = 0;
         }
 
-//        updateRouteGuide();
+        updateRouteGuide();
 
         // Device size
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -224,10 +223,10 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             return;
         }
         if (stairUp){
-            test.setText("Go up the stairs");
+            guideText.setText("Go up the stairs");
             return;
         }else if (stairDown){
-            test.setText("Go down the stairs");
+            guideText.setText("Go down the stairs");
             return;
         }
 
@@ -239,7 +238,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 // update ui
                 double dis = route.getPoints().get(cp)
                         .distance(route.getPoints().get(route.getPoints().size()-1));
-                test.setText(dis + " meters to destination.");
+                guideText.setText(dis + " meters to destination.");
                 break;
             }
             Point prevPnt = route.getPoints().get(np-1);
@@ -247,10 +246,10 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             Point nextPnt = route.getPoints().get(np+1);
 
             if (currentPnt.getZ() - prevPnt.getZ()==1){
-                test.setText("Go up the stairs");
+                guideText.setText("Go up the stairs");
                 break;
             }else if (currentPnt.getZ() - prevPnt.getZ()==-1){
-                test.setText("Go down the stairs");
+                guideText.setText("Go down the stairs");
                 break;
             }
 
@@ -263,11 +262,11 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 // from cp to np meter
                 // if cp-np == 1 then turn to left
                 if ((cp-np) == 1){
-                    test.setText("Turn to left");
+                    guideText.setText("Turn to left");
                 }else{
                     double dis = route.getPoints().get(cp)
                             .distance(route.getPoints().get(np));
-                    test.setText(dis + " meters to left.");
+                    guideText.setText(dis + " meters to left.");
                 }
 
                 break;
@@ -277,11 +276,11 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 // from cp to np meter
                 // if cp-np == 1 then turn to right
                 if ((cp-np) == 1){
-                    test.setText("Turn to right");
+                    guideText.setText("Turn to right");
                 }else{
                     double dis = route.getPoints().get(cp)
                             .distance(route.getPoints().get(np));
-                    test.setText(dis + " meters to right.");
+                    guideText.setText(dis + " meters to right.");
                 }
 
                 break;
@@ -464,25 +463,25 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
             if (ni!=0){
                 // to debug
-                test.setText("yaw = "+ yaw +
-                                "Diff yaw = " + (yaw-originYaw) + "\n"+
-                                "current = " + current.getX()+", "+ current.getY()+ ", "+ current.getZ() +"\n"+
-                                "view = " +viewPoint.getX()+", "+viewPoint.getY()+  ", "+ viewPoint.getZ()+ "\n"+
-                          "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ ", "+ nextPnt.getZ() + "\n"+
-                                "distance to next point = "+ diffFromViewToNext.length() + "\n" +
-                        "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
-                        "is rotation :" + isARotationPoint + "\n" +
-                        "pitch: " + pitch + "\n"+
-                        "stuck = " + forceNextPoint+ "\n"+
-                        "angleBetweenTwoVector => "+ Math.toDegrees(angleBetweenTwoVector)+"\n"+
-                        "ni => "+ ni+"\n"+
-                        "rotationDegree => "+ rotationDegree+"\n" +
-                        "stair => "+ stairUp + " - " + stairDown + "\n" +
-                        "count stairs => "+ countStair+"\n" +
-                        "directionFromViewToNext => " + directionFromViewToNext.getX() + ", " + directionFromViewToNext.getY() + ", "+ directionFromViewToNext.getZ()+"\n"+
-                                "directionFromViewToCurrent => " + directionFromViewToCurrent.getX() + ", " + directionFromViewToCurrent.getY() + ", "+ directionFromViewToCurrent.getZ()
-
-                        );
+//                guideText.setText("yaw = "+ yaw +
+//                                "Diff yaw = " + (yaw-originYaw) + "\n"+
+//                                "current = " + current.getX()+", "+ current.getY()+ ", "+ current.getZ() +"\n"+
+//                                "view = " +viewPoint.getX()+", "+viewPoint.getY()+  ", "+ viewPoint.getZ()+ "\n"+
+//                          "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ ", "+ nextPnt.getZ() + "\n"+
+//                                "distance to next point = "+ diffFromViewToNext.length() + "\n" +
+//                        "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
+//                        "is rotation :" + isARotationPoint + "\n" +
+//                        "pitch: " + pitch + "\n"+
+//                        "stuck = " + forceNextPoint+ "\n"+
+//                        "angleBetweenTwoVector => "+ Math.toDegrees(angleBetweenTwoVector)+"\n"+
+//                        "ni => "+ ni+"\n"+
+//                        "rotationDegree => "+ rotationDegree+"\n" +
+//                        "stair => "+ stairUp + " - " + stairDown + "\n" +
+//                        "count stairs => "+ countStair+"\n" +
+//                        "directionFromViewToNext => " + directionFromViewToNext.getX() + ", " + directionFromViewToNext.getY() + ", "+ directionFromViewToNext.getZ()+"\n"+
+//                                "directionFromViewToCurrent => " + directionFromViewToCurrent.getX() + ", " + directionFromViewToCurrent.getY() + ", "+ directionFromViewToCurrent.getZ()
+//
+//                        );
 
 //                long currentMillis = System.currentTimeMillis();
 //                test.setText("diff step time: " + Math.abs(currentMillis - lastStepTime)+"\n"+
@@ -524,7 +523,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                             stairDown = true;
                         }
                         stairFinish = false;
-//                        updateRouteGuide();
+                        updateRouteGuide();
                         angleBetweenTwoVectorList = new ArrayList<>();
                         nextPointFrames = 0;
                     }else{
@@ -563,7 +562,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                         }
                         stairFinish = false;
 
-//                        updateRouteGuide();
+                        updateRouteGuide();
                         angleBetweenTwoVectorList = new ArrayList<>();
                         nextPointFrames = 0;
                     }
