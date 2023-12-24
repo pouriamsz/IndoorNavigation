@@ -444,7 +444,14 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
             }
             if (stairUp || stairDown){
 
-                finalQ = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
+                faceToBed = Quaternion.axisAngle(Vector3.right(), 90f);
+                lookFromViewToNext = Quaternion.axisAngle(Vector3.up(), (float)Math.toDegrees(initial2dRotate+rotationDegree)+270f);
+
+                Quaternion finalQTmp = Quaternion.multiply(lookFromViewToNext, faceToBed );
+
+                Quaternion faceToBedTmp = Quaternion.axisAngle(Vector3.up(), 90f);
+                finalQ = Quaternion.multiply(finalQTmp, faceToBedTmp );
+
 
                 // TODO: 45 and 135?
             } else if (Math.toDegrees(angleBetweenTwoVector)>35 &&  Math.toDegrees(angleBetweenTwoVector)<125){
