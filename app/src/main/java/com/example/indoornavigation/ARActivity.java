@@ -236,7 +236,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         while (true){
             if (np+1 >= route.getPoints().size()){
                 // update ui
-                double dis = route.getPoints().get(cp)
+                double dis = current
                         .distance(route.getPoints().get(route.getPoints().size()-1));
                 guideText.setText(dis + " meters to destination.");
                 break;
@@ -264,7 +264,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 if ((cp-np) == 1){
                     guideText.setText("Turn to left");
                 }else{
-                    double dis = route.getPoints().get(cp)
+                    double dis = current
                             .distance(route.getPoints().get(np));
                     guideText.setText(dis + " meters to left.");
                 }
@@ -278,7 +278,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 if ((cp-np) == 1){
                     guideText.setText("Turn to right");
                 }else{
-                    double dis = route.getPoints().get(cp)
+                    double dis = current
                             .distance(route.getPoints().get(np));
                     guideText.setText(dis + " meters to right.");
                 }
@@ -357,10 +357,10 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 }else{
                     tanPitch = (1/Math.tan(Math.toRadians(Math.abs(pitch))));
                 }
-                if (tanPitch>0.5){
-                    tanPitch = 0.5;
+                if (tanPitch>0.3){
+                    tanPitch = 0.3;
                 }
-                d = 1.65 * tanPitch;
+                d = 1.5 * tanPitch;
             }
             viewPoint = vertexCurrent.add(new Vertex(d*Math.sin(Math.toRadians(yaw-originYaw)),
                     d*Math.cos(Math.toRadians(yaw-originYaw)),
@@ -449,7 +449,12 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
                 Quaternion finalQTmp = Quaternion.multiply(lookFromViewToNext, faceToBed );
 
-                Quaternion faceToBedTmp = Quaternion.axisAngle(Vector3.up(), 90f);
+                Quaternion faceToBedTmp = new Quaternion();
+                if (stairUp){
+                    faceToBedTmp = Quaternion.axisAngle(Vector3.up(), 90f);
+                }else{
+                    faceToBedTmp = Quaternion.axisAngle(Vector3.down(), 90f);
+                }
                 finalQ = Quaternion.multiply(finalQTmp, faceToBedTmp );
 
 
@@ -470,25 +475,25 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
 
             if (ni!=0){
                 // to debug
-//                guideText.setText("yaw = "+ yaw +
-//                                "Diff yaw = " + (yaw-originYaw) + "\n"+
-//                                "current = " + current.getX()+", "+ current.getY()+ ", "+ current.getZ() +"\n"+
-//                                "view = " +viewPoint.getX()+", "+viewPoint.getY()+  ", "+ viewPoint.getZ()+ "\n"+
-//                          "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ ", "+ nextPnt.getZ() + "\n"+
-//                                "distance to next point = "+ diffFromViewToNext.length() + "\n" +
-//                        "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
-//                        "is rotation :" + isARotationPoint + "\n" +
-//                        "pitch: " + pitch + "\n"+
-//                        "stuck = " + forceNextPoint+ "\n"+
-//                        "angleBetweenTwoVector => "+ Math.toDegrees(angleBetweenTwoVector)+"\n"+
-//                        "ni => "+ ni+"\n"+
-//                        "rotationDegree => "+ rotationDegree+"\n" +
-//                        "stair => "+ stairUp + " - " + stairDown + "\n" +
-//                        "count stairs => "+ countStair+"\n" +
-//                        "directionFromViewToNext => " + directionFromViewToNext.getX() + ", " + directionFromViewToNext.getY() + ", "+ directionFromViewToNext.getZ()+"\n"+
-//                                "directionFromViewToCurrent => " + directionFromViewToCurrent.getX() + ", " + directionFromViewToCurrent.getY() + ", "+ directionFromViewToCurrent.getZ()
+//                    guideText.setText( "stop = " + stopUpdateCurrent  + " - yaw = "+ yaw +
+//                                    "Diff yaw = " + (yaw-originYaw) + "\n"+
+//                                    "current = " + current.getX()+", "+ current.getY()+ ", "+ current.getZ() +"\n"+
+//                                    "view = " +viewPoint.getX()+", "+viewPoint.getY()+  ", "+ viewPoint.getZ()+ "\n"+
+//                              "next point" + nextPnt.getX() + ", " + nextPnt.getY()+ ", "+ nextPnt.getZ() + "\n"+
+//                                    "distance to next point = "+ diffFromViewToNext.length() + "\n" +
+//                            "distance from current to next = " + diffFromCurrentToNext.length()+ "\n"+
+//                            "is rotation :" + isARotationPoint + "\n" +
+//                            "pitch: " + pitch + "\n"+
+//                            "stuck = " + forceNextPoint+ "\n"+
+//                            "angleBetweenTwoVector => "+ Math.toDegrees(angleBetweenTwoVector)+"\n"+
+//                            "ni => "+ ni+"\n"+
+//                            "rotationDegree => "+ rotationDegree+"\n" +
+//                            "stair => "+ stairUp + " - " + stairDown + "\n" +
+//                            "count stairs => "+ countStair+"\n" +
+//                            "directionFromViewToNext => " + directionFromViewToNext.getX() + ", " + directionFromViewToNext.getY() + ", "+ directionFromViewToNext.getZ()+"\n"+
+//                                    "directionFromViewToCurrent => " + directionFromViewToCurrent.getX() + ", " + directionFromViewToCurrent.getY() + ", "+ directionFromViewToCurrent.getZ()
 //
-//                        );
+//                            );
 
 //                long currentMillis = System.currentTimeMillis();
 //                test.setText("diff step time: " + Math.abs(currentMillis - lastStepTime)+"\n"+
@@ -543,7 +548,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
                 if (!route.finish(ni)){
                     // TODO:1.?
                     // TODO: current or view
-                    if (diffFromCurrentToNext.length()<1.0 || stairFinish){
+                    if (diffFromCurrentToNext.length()<0.5 || stairFinish){
                         if (stairFinish){
                             modifyCurrentStair(prevPnt, nextPnt);
                         }
@@ -741,7 +746,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        if (firstCheck<10){
+        if (firstCheck<20){
             firstCheck++;
             return;
         }
@@ -858,6 +863,7 @@ public class ARActivity extends AppCompatActivity implements SensorEventListener
         if (stopUpdateCurrent){
             return;
         }
+        updateRouteGuide();
         // left
         if (yaw>240 && yaw <290){
             current.x -= stepLength;

@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         openCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                List<Integer> mergedRoute = new ArrayList<>();
                 Graph usedGraph;
                 if (blindCheck.isChecked()){
                     blindMode = true;
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (currentPoint!=0 && selectedDes!=0){
                     route = dijkstra(usedGraph.getGraph(), currentPoint-1, selectedDes-1);
+                     mergedRoute = mergeRoute();
 //                    String routeString = "";
 //                    for (Integer i: route) {
 //                        routeString += i+"-";
@@ -145,12 +147,13 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 try {
-                    if (route != null && route.size()>0){
+                    if (mergedRoute != null && mergedRoute.size()>0){
+                        List<Integer> finalMergedRoute = mergedRoute;
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 ArrayList<Point> points = new ArrayList<>();
-                                for (int ri: route) {
+                                for (int ri: finalMergedRoute) {
                                     points.add(graph.getPoints().get(ri));
                                 }
                                 Intent intent = new Intent(MainActivity.this, ARActivity.class);
@@ -171,6 +174,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private List<Integer> mergeRoute() {
+        List<Integer> mergedRoute = new ArrayList<>();
+        int ni = 0;
+        mergedRoute.add(route.get(ni));
+        int np = ni;
+        while (true){
+            if (np+2 >= route.size()){
+                mergedRoute.add(route.get(np+1));
+                break;
+            }
+            Point currentPnt = graph.getPoints().get(route.get(np));
+            Point nextPnt = graph.getPoints().get(route.get(np+1));
+            Point nextNextPnt = graph.getPoints().get(route.get(np+2));
+
+            if (Math.abs(nextNextPnt.getZ() - nextPnt.getZ()) == 1){
+                mergedRoute.add(route.get(np+1));
+                mergedRoute.add(route.get(np+2));
+                np++;
+                continue;
+            }
+            if (Math.abs(currentPnt.getZ() - nextPnt.getZ())==1){
+                np++;
+                continue;
+            }
+
+            Point diff0 = nextPnt.sub(currentPnt);
+            Point diff1 = nextNextPnt.sub(nextPnt);
+            double cross = diff0.cross(diff1);
+            if (cross>0) {
+                // left side
+                // update ui
+                // from cp to np meter
+                // if cp-np == 1 then turn to left
+                mergedRoute.add(route.get(np+1));
+
+            }else if (cross<0){
+                // right side
+                // update ui
+                // from cp to np meter
+                // if cp-np == 1 then turn to right
+                mergedRoute.add(route.get(np+1));
+
+            }
+
+            np++;
+        }
+
+        return mergedRoute;
     }
 
     private void graphBlindConnections() {
@@ -205,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         graphBlind.connect(29,new int[]{23, 30});
         graphBlind.connect(30,new int[]{29, 31});
         graphBlind.connect(31,new int[]{30, 32});
-        graphBlind.connect(32,new int[]{33, 34});
+        graphBlind.connect(32,new int[]{33, 34, 31});
         graphBlind.connect(33,new int[]{32});
         graphBlind.connect(34,new int[]{32, 35});
         graphBlind.connect(35,new int[]{34, 36});
@@ -246,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
         graph.connect(29,new int[]{23, 30});
         graph.connect(30,new int[]{29, 31});
         graph.connect(31,new int[]{30, 32});
-        graph.connect(32,new int[]{33, 34});
+        graph.connect(32,new int[]{33, 34, 31});
         graph.connect(33,new int[]{32});
         graph.connect(34,new int[]{32, 35});
         graph.connect(35,new int[]{34, 36});
